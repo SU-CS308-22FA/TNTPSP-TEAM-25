@@ -163,5 +163,4 @@ app.post('/deleteuser',function(req,res){
     res.redirect('/login')
   }
 })
-app.listen(3001);
-console.log('Server is listening on port 3001');
+app.listen(process.env.PORT || 3001);
