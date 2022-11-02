@@ -16,10 +16,21 @@ interface activePage {
 
 function SignupPage() {
 
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-      };
-    
+  const onFinish = (values: any) => {
+      const formInfo = {
+        username: values.username,
+        email: values.email,
+        password: values.password
+      }
+      console.log(values);
+
+      var url = "/register?email=" + values.email + "&password=" + values.password
+      fetch(url, {
+        method: "GET"
+      }).then(res => console.log(res))
+
+  }
+
       const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
       };
@@ -62,14 +73,14 @@ return (
         name="username"
         rules={[{ required: true, message: 'Please input your username!' }]}
       >
-        <Input />
+        <Input name="username"/>
       </Form.Item>
       <Form.Item
         label="Email"
         name="email"
         rules={[{ required: true, message: 'Please input your email!' }]}
       >
-        <Input />
+        <Input name="email"/>
       </Form.Item>
 
       <Form.Item
@@ -77,7 +88,7 @@ return (
         name="password"
         rules={[{ required: true, message: 'Please input your password!' }]}
       >
-        <Input.Password />
+        <Input.Password name="password "/>
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -87,7 +98,7 @@ return (
       </Form.Item>
     </Form>
           </Row>
-          
+
           <br />
         </Card>
       </Col>
@@ -96,13 +107,13 @@ return (
           <button>Go to Login</button>
         </Link>
       </Col>
-      
+
     </Row>
     <br />
   </div>
-   
-    
-   
+
+
+
     );
 }
 export default SignupPage;

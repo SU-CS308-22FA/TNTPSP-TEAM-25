@@ -15,7 +15,7 @@ const { Content } = Layout;
 function UserProfile() {
 
 return (
-    
+
     <div style={{ padding: "15px 15px 0px 15px", background: "#CD1818" , height: 750 }}>
       <Row>
       <Col span={24}>
@@ -39,7 +39,7 @@ return (
         <p className="title"> email@gmail.com</p>
         <p> Standart User </p>
         <p> Password </p>
-        
+
         <p>
         <Link to="/UpdateProfile">
           <button>Update</button>
@@ -55,8 +55,8 @@ return (
         </Link>
     </div>
 
-    
-   
+
+
     );
 }
 export default UserProfile;

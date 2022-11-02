@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button, Card, Col, Row, Image, Checkbox, Form, Input } from "antd";
 import { Layout } from "antd";
 import { DownloadOutlined } from '@ant-design/icons';
@@ -15,17 +15,27 @@ interface activePage {
     page: string;
   }
 
-function LoginPage() {
 
+function LoginPage() {
     const onFinish = (values: any) => {
-        console.log('Success:', values);
-      };
-    
+        const formInfo = {
+          email: values.email,
+          password: values.password
+        }
+        var url = "/login?email=" + values.email + "&password=" + values.password
+        fetch(url, {
+          method: "GET"
+        }).then(res => console.log(res))
+
+    }
+
       const onFinishFailed = (errorInfo: any) => {
         console.log('Failed:', errorInfo);
       };
 
       const [size, setSize] = useState<SizeType>('large');
+
+
 
 return (
     <div style={{ padding: "15px 15px 0px 15px", background: "#CD1818", height: 750, textAlign: "center" }}>
@@ -64,7 +74,10 @@ return (
         name="email"
         rules={[{ required: true, message: 'Please input your email!' }]}
       >
-        <Input />
+
+        <Input
+        name="email"
+        />
       </Form.Item>
 
       <Form.Item
@@ -80,13 +93,13 @@ return (
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-      <Link to="/Mainpage">
-          <button>Login</button>
-        </Link>
+      <Button type="primary" htmlType="submit">
+                                 Submit
+                             </Button>
       </Form.Item>
     </Form>
           </Row>
-          
+
           <br />
         </Card>
       </Col>
@@ -95,13 +108,13 @@ return (
           <button>Go to Sign up</button>
         </Link>
       </Col>
-      
+
     </Row>
     <br />
   </div>
-   
-    
-   
+
+
+
     );
 }
 export default LoginPage;
