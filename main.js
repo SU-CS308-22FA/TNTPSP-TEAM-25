@@ -108,14 +108,22 @@ app.post('/register', function(req, res) {
     email: req.body.email
   });
 
-  userInstance.save((err) => {
-    if (err) {
-      console.log(err);
-      res.send("error")
-    }else{
-      res.redirect("/login")
-    }
-  });
+  userModel.findOne({
+    email: req.body.email
+  }).then((user) => {
+    res.render("register", {errorMsg: "Email already exits"})
+
+   }).catch(
+    userInstance.save((err) => {
+      if (err) {
+        console.log(err);
+        res.send("error")
+      }else{
+        res.redirect("/login")
+      }
+    })
+  );
+  
 
 });
 
