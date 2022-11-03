@@ -21,9 +21,8 @@ const userModel = mongoose.model("userModel", userSchema);
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
-
 app.use(express.json());       // to support JSON-encoded bodies
-app.use(express.urlencoded());
+app.use(express.urlencoded( {extended: true} ));
 //mongodb+srv://deneme:<password>@cluster0.b2biihn.mongodb.net/?retryWrites=true&w=majority
 //serving public file
 app.use(express.static(__dirname));
@@ -83,7 +82,8 @@ app.post('/login', function(req, res) {
         req.session.email = req.body.email
         req.session.password = req.body.password
         req.session.username = user.username
-        res.send("Logged in! ");
+        res.redirect("/userprofile")
+        
       }else{
         res.send("Wrong Password");
       }
@@ -113,7 +113,7 @@ app.post('/register', function(req, res) {
       console.log(err);
       res.send("error")
     }else{
-      res.send("Registered!")
+      res.redirect("/login")
     }
   });
 
