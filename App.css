@@ -1,0 +1,13 @@
+body{
+    text-align: center;
+}
+
+.buttonred{
+    color: white;
+    background-color: red;
+    width: 1140px;
+    height: 45px;
+    font-size: large;
+    border: none;
+    border-radius: 5px;
+}
