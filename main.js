@@ -57,6 +57,13 @@ app.get('/register', function(req, res) {
   res.render('register');
 });
 
+app.get('/playerprofile', function(req, res) {
+  if(req.session){
+    console.log(req.session);
+  }
+  res.render('playerprofile');
+});
+
 app.get('/userprofile', function(req, res){
   console.log("req session userprofile" + req.session);
   if(req.session.username){
