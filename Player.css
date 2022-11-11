@@ -31,3 +31,8 @@
   .child2 {
     display: inline-block;
   }
+
+.playerbutton{
+  margin: 20px;
+  text-align: center;
+}
