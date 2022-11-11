@@ -64,6 +64,13 @@ app.get('/playerprofile', function(req, res) {
   res.render('playerprofile');
 });
 
+app.get('/mainpage', function(req, res) {
+  if(req.session){
+    console.log(req.session);
+  }
+  res.render('mainpage');
+});
+
 app.get('/userprofile', function(req, res){
   console.log("req session userprofile" + req.session);
   if(req.session.username){
@@ -89,7 +96,7 @@ app.post('/login', function(req, res) {
         req.session.email = req.body.email
         req.session.password = req.body.password
         req.session.username = user.username
-        res.redirect("/userprofile")
+        res.redirect("/mainpage")
         
       }else{
         res.send("Wrong Password");
