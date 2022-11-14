@@ -14,6 +14,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   password: String,
+  password2: String,
   email: String
 });
 
@@ -119,18 +120,26 @@ app.post('/register', function(req, res) {
   {
     username: req.body.username,
     password : req.body.password,
+    password2 : req.body.password2,
     email: req.body.email
   });
+  if (password!=password2) // bakılacak
+  {
+    res.render("register", {errorMsg: "Password's do not match"})
+  }
+  else{
+    userInstance.save((err) => {
+      if (err) {
+        console.log(err);
+        res.send("error")
+      }else{
+        res.redirect('/login')
+  
+      }
+    });
+  }
 
-  userInstance.save((err) => {
-    if (err) {
-      console.log(err);
-      res.send("error")
-    }else{
-      res.redirect('/login')
-
-    }
-  });
+  
 
 });
 
