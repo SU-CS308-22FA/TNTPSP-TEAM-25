@@ -1,0 +1,38 @@
+.centerimage{
+    display: block;
+    margin-left: 40%;
+    margin-right: 10%;
+}
+.centertext{
+    text-align: center;
+    font-size: large;
+}
+.buttonred{
+    margin-inline: 40px;
+    margin-top: 25px;
+    margin-left: 40%;
+    margin-right: 40%;
+
+    color: white;
+    background-color: red;
+    height: 45px;
+    font-size: large;
+    border: none;
+    border-radius: 5px;
+    width: 20%;
+}
+
+.parent {
+    margin-left: 28%;
+  }
+  .child1 {
+    display: inline-block;
+  }
+  .child2 {
+    display: inline-block;
+  }
+
+.playerbutton{
+  margin: 20px;
+  text-align: center;
+}

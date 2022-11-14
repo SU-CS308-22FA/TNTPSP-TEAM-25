@@ -1,12 +1,32 @@
 body{
     text-align: center;
+    
 }
 
 .buttonred{
+    margin-inline: 40px;
+    margin-top: 15px;
+
     color: white;
     background-color: red;
     height: 45px;
     font-size: large;
     border: none;
     border-radius: 5px;
+    width: 40%;
+}
+
+.redbackground{
+    background-color: rgb(184, 0, 0);
+}
+.whitebackground{
+    background-color: rgb(255, 255, 255);
+}
+
+.textinput{
+    align-self: center;
+    border-radius: 4px;
+    border:2px solid #ccc;
+    margin-top: 5px;
+    height: 35px;
 }

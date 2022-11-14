@@ -14,6 +14,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   password: String,
+  password2: String,
   email: String
 });
 
@@ -57,6 +58,20 @@ app.get('/register', function(req, res) {
   res.render('register');
 });
 
+app.get('/playerprofile', function(req, res) {
+  if(req.session){
+    console.log(req.session);
+  }
+  res.render('playerprofile');
+});
+
+app.get('/mainpage', function(req, res) {
+  if(req.session){
+    console.log(req.session);
+  }
+  res.render('mainpage');
+});
+
 app.get('/userprofile', function(req, res){
   console.log("req session userprofile" + req.session);
   if(req.session.username){
@@ -82,7 +97,7 @@ app.post('/login', function(req, res) {
         req.session.email = req.body.email
         req.session.password = req.body.password
         req.session.username = user.username
-        res.redirect("/userprofile")
+        res.redirect("/mainpage")
         
       }else{
         res.send("Wrong Password");
@@ -105,24 +120,25 @@ app.post('/register', function(req, res) {
   {
     username: req.body.username,
     password : req.body.password,
+    password2 : req.body.password2,
     email: req.body.email
   });
-
-  userModel.findOne({
-    email: req.body.email
-  }).then((user) => {
-    res.render("register", {errorMsg: "Email already exits"})
-
-   }).catch(
+  if (password!=password2) // bakılacak
+  {
+    res.render("register", {errorMsg: "Password's do not match"})
+  }
+  else{
     userInstance.save((err) => {
       if (err) {
         console.log(err);
         res.send("error")
       }else{
-        res.redirect("/login")
+        res.redirect('/login')
+  
       }
-    })
-  );
+    });
+  }
+
   
 
 });
