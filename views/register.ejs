@@ -40,17 +40,16 @@
                         <input style="width: 50%;" type="text" class="textinput" name="username" placeholder="Username" required="" autofocus="" />
                         <input style="width: 50%;" type="text" class="textinput" name="email" placeholder="Email Address" required="" autofocus="" />
                         <input style="width: 50%;" type="password" class="textinput" name="password" placeholder="Password" required=""/>
-                        <div class="form-group">
-                            <label for="password2">Confirm Password</label>
-                            <input
+                        <input
                             type="password"
                             id="password2"
                             name="password2"
                             class="form-control"
                             placeholder="Confirm Pasword"
                             value="<%= typeof email != 'undefined' ? password2 : '' %>">
-        
-                        </div>
+                        <% if(locals.errorMsg){%>
+                            <p> <%=locals.errorMsg%> </p>
+                        <%}%>
 
 
                         <button class="buttonred" name="Submit" value="Login" type="Submit">Register</button>
