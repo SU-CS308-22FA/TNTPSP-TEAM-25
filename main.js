@@ -123,7 +123,7 @@ app.post('/register', function(req, res) {
     password2 : req.body.password2,
     email: req.body.email
   });
-  if (password!=password2) // bakılacak
+  if (req.body.password!=req.body.password2) // bakılacak
   {
     res.render("register", {errorMsg: "Password's do not match"})
   }
