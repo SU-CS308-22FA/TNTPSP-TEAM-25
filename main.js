@@ -11,21 +11,36 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 const Schema = mongoose.Schema;
+
+// USER SCHEMA MODEL FOR MONGODB //
+
 const userSchema = new Schema({
   username: String,
   password: String,
   password2: String,
-  email: String
+  email: String,
+  comments : { type : Array , "default" : [] }
 });
 
 const userModel = mongoose.model("userModel", userSchema);
 
-// set the view engine to ejs
+
+// PLAYER SCHEMA MODEL FOR MONGODB//
+const playerSchema = new Schema({
+  fullname: String,
+  age: Number,
+  comments : { type : Array , "default" : [] }
+
+});
+
+const playerModel = mongoose.model("player", playerSchema);
+
+
+
 app.set('view engine', 'ejs');
 app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded( {extended: true} ));
-//mongodb+srv://deneme:<password>@cluster0.b2biihn.mongodb.net/?retryWrites=true&w=majority
-//serving public file
+
 app.use(express.static(__dirname));
 
 app.use(cookieParser());
@@ -57,12 +72,24 @@ app.get('/register', function(req, res) {
   }
   res.render('register');
 });
+app.get('/playerprofile', function(req, res){
+    res.render('playerprofile')
+})
+app.get('/playerprofile/:playername', function(req, res) {
+  //find the player by player name from the database
+  console.log(req.params['playername'])
+  playerModel.findOne({
+    age: null
+  }).then(
+    (player) => {
+      console.log(user);
 
-app.get('/playerprofile', function(req, res) {
-  if(req.session){
-    console.log(req.session);
-  }
-  res.render('playerprofile');
+    }
+  ).catch(
+    (error) => {
+      res.send("There is no player named" + req.params['playername'])
+    }
+  );
 });
 
 app.get('/mainpage', function(req, res) {
@@ -98,7 +125,7 @@ app.post('/login', function(req, res) {
         req.session.password = req.body.password
         req.session.username = user.username
         res.redirect("/mainpage")
-        
+
       }else{
         res.send("Wrong Password");
       }
@@ -134,12 +161,10 @@ app.post('/register', function(req, res) {
         res.send("error")
       }else{
         res.redirect('/login')
-  
+
       }
     });
   }
-
-  
 
 });
 
