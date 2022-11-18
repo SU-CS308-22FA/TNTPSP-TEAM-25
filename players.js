@@ -33,3 +33,4 @@ playerInstance.save((err) => {
     console.log('SUCCESS SAVE');
   }
 });
+

@@ -29,8 +29,8 @@ const userModel = mongoose.model("userModel", userSchema);
 const playerSchema = new Schema({
   fullname: String,
   age: Number,
-  comments : { type : Array , "default" : [] }
-
+  comments : { type : Array , "default" : [] },
+  pid: Number
 });
 
 const playerModel = mongoose.model("player", playerSchema);
@@ -78,26 +78,47 @@ app.get('/playerprofile', function(req, res){
 app.get('/playerprofile/:playername', function(req, res) {
   //find the player by player name from the database
   console.log(req.params['playername'])
-  playerModel.findOne({
-    age: null
-  }).then(
-    (player) => {
-      console.log(user);
+  var name = req.params['playername'].substring(1)
 
-    }
-  ).catch(
-    (error) => {
-      res.send("There is no player named" + req.params['playername'])
-    }
-  );
+  var query = {fullname: name}
+
+  playerModel.find(query, function (err, playerinfo) {
+    res.render('playerprofile',{
+      pName: playerinfo[0].fullname,
+      pAge: playerinfo[0].age,
+      standardcomments : playerinfo[0].comments
+    })
+  });
 });
 
 app.get('/mainpage', function(req, res) {
+  
+  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+
+      res.render('mainpage',{
+        arr:playerlist
+      })
+  });
+});
+
+app.get('/addcomment', function(req, res) {
   if(req.session){
     console.log(req.session);
   }
-  res.render('mainpage');
+  res.render('addcomment');
 });
+
+app.get('/addcomment/:playername', function(req, res) {
+  var name = req.params['playername'].substring(1)
+
+  if(req.session){
+    console.log(req.session);
+  }
+  res.render('addcomment',{
+    pName: name
+  });
+});
+
 
 app.get('/userprofile', function(req, res){
   console.log("req session userprofile" + req.session);
@@ -212,4 +233,22 @@ app.post('/deleteuser',function(req,res){
     res.redirect('/login')
   }
 })
+
+
+app.post('/addcomment',async function(req,res){
+  var name = req.body.pName
+  await playerModel.findOneAndUpdate({
+    fullname: name
+  },
+  {
+    $addToSet:{
+      comments: req.body.comment
+    }
+
+  }
+  );
+  res.redirect('playerprofile/:'+name)
+})
+
+
 app.listen(process.env.PORT || 3001);
