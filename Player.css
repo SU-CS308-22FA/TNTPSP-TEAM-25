@@ -36,3 +36,10 @@
   margin: 20px;
   text-align: center;
 }
+
+.commenttextarea{
+  font-size: 20px;
+  border-radius: 10px;
+  border-width: 5px;
+  border-color: red;
+}

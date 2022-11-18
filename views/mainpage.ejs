@@ -34,36 +34,14 @@
         <div style="width: 88%;border:5px solid red;padding-block: 10px; display: inline-block;">
             <table >
                 <tr>
-                    <a href="/playerprofile">
+                    <%arr.forEach(player => {%>
+                    <a href="/playerprofile/:<%= player.fullname%>" >
                         <button class="playerbutton">
                             <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > arda güler </p> 
-                        </button>
-                        <button class="playerbutton">
-                            <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > arda güler </p> 
-                        </button>
-                        <button class="playerbutton">
-                            <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > arda güler </p> 
-                        </button>
-                        <button class="playerbutton">
-                            <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > arda güler </p> 
-                        </button>
-                        <button class="playerbutton">
-                            <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > arda güler </p> 
-                        </button>
-                        <button class="playerbutton">
-                            <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > arda güler </p> 
-                        </button>
-                        <button class="playerbutton">
-                            <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > arda güler </p> 
+                            <p style="font-size: 15px;" > <%= player.fullname%></p> 
                         </button>
                     </a>
+                    <%})%>
                     
                 </tr>
 
