@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <link href="/Player.css" rel="stylesheet" type="text/css">
+
+    <body style="text-align: center;">
+
+        <br></br>
+        <br></br>
+        <br></br>
+        <h1> Type your new comment</h1>
+        <form action="/edit" method="post">
+            <input class="text" name="pName" readonly value="<%=pName%>">
+            <br></br>
+            <textarea id="comment" class="commenttextarea" name="comment" rows="10" cols="100" placeholder="Type your comment" style="resize: none"></textarea>
+            <br></br>
+            <input class="buttonred" type="submit" value="Submit">
+        </form>
+        <form action="/deletecomment" method="post">
+            <input class="text" name="pName" readonly value="<%=pName%>" type="hidden">
+            <input class="buttonred" type="submit" value="Delete Comment">
+        </form> 
+        
+
+    </body>

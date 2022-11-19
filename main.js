@@ -83,11 +83,25 @@ app.get('/playerprofile/:playername', function(req, res) {
   var query = {fullname: name}
 
   playerModel.find(query, function (err, playerinfo) {
-    res.render('playerprofile',{
-      pName: playerinfo[0].fullname,
-      pAge: playerinfo[0].age,
-      standardcomments : playerinfo[0].comments
-    })
+    var result = playerinfo[0].comments.findIndex(({ commenter }) => commenter === req.session.username)
+    console.log(result)
+
+    if(result==-1){                 // daha önce yorumu yoksa
+      res.render('playerprofile',{
+        pName: playerinfo[0].fullname,
+        pAge: playerinfo[0].age,
+        standardcomments : playerinfo[0].comments,
+        commenttype: "add"
+      })
+    }
+    else{                           // daha önce yorumu varsa
+      res.render('playerprofile',{
+        pName: playerinfo[0].fullname,
+        pAge: playerinfo[0].age,
+        standardcomments : playerinfo[0].comments,
+        commenttype: "edit"
+      })
+    }
   });
 });
 
@@ -101,6 +115,7 @@ app.get('/mainpage', function(req, res) {
   });
 });
 
+// ADD COMMENT PAGE
 app.get('/addcomment', function(req, res) {
   if(req.session){
     console.log(req.session);
@@ -119,12 +134,39 @@ app.get('/addcomment/:playername', function(req, res) {
   });
 });
 
+// EDIT COMMENT PAGE
+app.get('/editcomment', function(req, res) {
+  if(req.session){
+    console.log(req.session);
+  }
+  res.render('editcomment');
+});
+app.get('/editcomment/:playername', function(req, res) {
+  var name = req.params['playername'].substring(1)
+
+  if(req.session){
+    console.log(req.session);
+  }
+  res.render('editcomment',{
+    pName: name
+  });
+});
 
 app.get('/userprofile', function(req, res){
   console.log("req session userprofile" + req.session);
   if(req.session.username){
     console.log("session exists");
-    res.render('userprofile',{ username: req.session.username, email: req.session.email, password: req.session.password })
+
+    userModel.find({username: req.session.username}, function (err, userinfo) {
+      res.render('userprofile',{
+        username: req.session.username, 
+        email: req.session.email, 
+        password: req.session.password,
+
+        commentarray: userinfo[0].comments,
+        
+      })
+    });
   }else{
     res.redirect('/login')
   }
@@ -242,12 +284,94 @@ app.post('/addcomment',async function(req,res){
   },
   {
     $addToSet:{
-      comments: req.body.comment
+      comments: {
+        comment: req.body.comment,
+        commenter: req.session.username
+      }
     }
 
   }
   );
+  await userModel.findOneAndUpdate({
+    username: req.session.username
+  },
+  {
+    $addToSet:{
+      comments: {
+        comment: req.body.comment,
+        playername: name
+      }
+    }
+
+  }
+  );
+
   res.redirect('playerprofile/:'+name)
+})
+
+app.post('/edit',async function(req,res){ // 
+  var name = req.body.pName
+  var userName = req.session.username
+  await playerModel.findOneAndUpdate({
+    fullname: name,
+  },
+  {
+    $set:{
+      comments: {
+        comment: req.body.comment,
+        playername: name
+      }
+    }
+  },
+  { arrayFilters: [{ commenter: userName}]}
+  );
+  await userModel.findOneAndUpdate({
+    username: req.session.username
+  },
+  {
+    $set:{
+      comments: {
+        comment: req.body.comment,
+        playername: name
+      }
+    }
+
+  }
+  );
+
+  res.redirect('playerprofile/:'+name)
+})
+
+app.post('/deletecomment', async function(req,res){
+  var name = req.body.pName
+  await playerModel.updateOne({
+    fullname: name
+  },
+  {
+    $pull:{
+      comments: {
+        commenter: req.session.username
+      }
+    }
+
+  }
+  );
+  await userModel.updateOne({
+    username: req.session.username
+  },
+  {
+    $pull:{
+      comments: {
+        playername: name
+      }
+    }
+
+  }
+  );
+
+  res.redirect('playerprofile/:'+name)
+
+
 })
 
 
