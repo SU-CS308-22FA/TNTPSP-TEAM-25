@@ -5,7 +5,7 @@
     <body>
         <div class="parent">
             <div class="child1">
-                <img src=".images/userimage.jpg" class="centerimage"  width="30%" height="30%">
+                <img src="/images/userimage.jpg" class="centerimage"  width="30%" height="30%">
     
             </div>
     
@@ -35,15 +35,20 @@
             <p style="font-size:25px ;margin: 15px;" ><b>8.5/10</b>  </p>
 
         </div>
-        <a href="/addcomment/:<%= pName%>">
-        <button class="buttonred"> Add Comment And Rating </button>
+        <% if(commenttype=="add"){%>
+            <a href="/addcomment/:<%= pName%>">
+                <button class="buttonred"> Add Comment And Rating </button>
+        <% } else{ %>
+            <a href="/editcomment/:<%= pName%>">
+                <button class="buttonred"> Edit Comment And Rating </button>
+        <% }%>
 
         </a>
         <br></br>
         <table style="width: 80%; margin-left: 10%;">
             <td >
-                <div style="border:2px solid red ;padding-bottom: 20px;padding-top: 10px;text-align: center;">
-                    <header style="font-size: 30px;"> Verified User Comments </header>
+                <div style="border:2px solid red ;padding-bottom: 20px;padding-top: 10px;">
+                    <header style="font-size: 30px;text-align: center;"> Verified User Comments </header>
                     <ol>
                     
                     
@@ -60,11 +65,11 @@
 
             </td>
             <td >
-                <div style="border:2px solid red ;padding-bottom: 20px;padding-top: 10px;text-align: center;">
-                    <header style="font-size: 30px;"> Standard User Comments </header>
+                <div style="border:2px solid red ;padding-bottom: 20px;padding-top: 10px;">
+                    <header style="font-size: 30px;text-align: center;"> Standard User Comments </header>
                     <ol>
-                        <%standardcomments.forEach(comment => {%>
-                            <li style="padding: 10px;"><%=comment%></li>
+                        <%standardcomments.forEach(commentobj => {%>
+                            <li style="padding: 10px;"><%=commentobj.commenter%>: &nbsp<%=commentobj.comment%></li>
 
                         <%})%>
                         
