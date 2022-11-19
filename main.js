@@ -312,31 +312,27 @@ app.post('/addcomment',async function(req,res){
 app.post('/edit',async function(req,res){ // 
   var name = req.body.pName
   var userName = req.session.username
-  await playerModel.findOneAndUpdate({
+  await playerModel.updateOne({
     fullname: name,
+    "comments.commenter":userName
   },
   {
     $set:{
-      comments: {
-        comment: req.body.comment,
-        playername: name
-      }
+      "comments.$.comment": req.body.comment
     }
   },
-  { arrayFilters: [{ commenter: userName}]}
   );
-  await userModel.findOneAndUpdate({
-    username: req.session.username
+  await userModel.updateOne({
+    username: req.session.username,
+    "comments.playername": name
   },
   {
     $set:{
-      comments: {
-        comment: req.body.comment,
-        playername: name
-      }
+      "comments.$.comment": req.body.comment
     }
 
-  }
+  },
+
   );
 
   res.redirect('playerprofile/:'+name)
