@@ -14,12 +14,12 @@
 
             </td>
             <td style="width:50% ;text-align: right;">
-            <form>
-            <input type="text" id="fname" name="fname" style="width: 300px;height:30px">
+            <form action="/mainpage" method="post" >
+            <input type="text" id="name" name="name" style="width: 300px;height:30px">
                 
             </td>
             <td style="width: 40%;text-align: left;">
-            <input type="image" src="images/searchimage.png" style="width: 60px;height:60px" alt="submit"> </input>
+            <input type="image" src="images/searchimage.png" style="width: 50px;height:50px" alt="submit"> </input>
             </form>
             </td>
 
@@ -34,14 +34,19 @@
         <div style="width: 88%;border:5px solid red;padding-block: 10px; display: inline-block;">
             <table >
                 <tr>
-                    <%arr.forEach(player => {%>
-                    <a href="/playerprofile/:<%= player.fullname%>" >
-                        <button class="playerbutton">
-                            <img src="images/userimage.jpg"   width="200px" height="200px">
-                            <p style="font-size: 15px;" > <%= player.fullname%></p> 
-                        </button>
-                    </a>
-                    <%})%>
+                    
+                <%arr.forEach(player => {%>
+                    <% if(player.fullname.search(searchtext)!=-1){ %>
+                        <a href="/playerprofile/:<%= player.fullname%>" >
+                            <button class="playerbutton">
+                                <img src="images/userimage.jpg"   width="200px" height="200px">
+                                <p style="font-size: 15px;" > <%= player.fullname%></p> 
+                            </button>
+                        </a>
+                    <% }%>
+                <%})%>
+                    
+                    
                     
                 </tr>
 

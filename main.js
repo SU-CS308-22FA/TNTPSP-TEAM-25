@@ -110,7 +110,8 @@ app.get('/mainpage', function(req, res) {
   playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
 
       res.render('mainpage',{
-        arr:playerlist
+        arr:playerlist,
+        searchtext: ""
       })
   });
 });
@@ -368,6 +369,19 @@ app.post('/deletecomment', async function(req,res){
   res.redirect('playerprofile/:'+name)
 
 
+})
+
+app.post('/mainpage', async function(req,res){
+
+  console.log(req.body.name)
+  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+    res.render('mainpage',{
+      arr:playerlist,
+      searchtext: req.body.name
+
+    })
+});
+  
 })
 
 
