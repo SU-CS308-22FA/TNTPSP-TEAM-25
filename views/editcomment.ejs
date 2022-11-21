@@ -17,7 +17,7 @@
         </form>
         <form action="/deletecomment" method="post">
             <input class="text" name="pName" readonly value="<%=pName%>" type="hidden">
-            <input class="buttonred" type="submit" value="Delete Comment">
+            <input class="buttonred" type="submit" value="Delete Comment" onclick="return confirm('Are you sure?')">
         </form> 
         
 
