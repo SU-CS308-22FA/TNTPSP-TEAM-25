@@ -280,63 +280,84 @@ app.post('/deleteuser',function(req,res){
 
 app.post('/addcomment',async function(req,res){
   var name = req.body.pName
-  await playerModel.findOneAndUpdate({
-    fullname: name
-  },
+  if(req.body.comment.length<20)
   {
-    $addToSet:{
-      comments: {
-        comment: req.body.comment,
-        commenter: req.session.username
-      }
-    }
-
+    res.send('comment is too short')
   }
-  );
-  await userModel.findOneAndUpdate({
-    username: req.session.username
-  },
-  {
-    $addToSet:{
-      comments: {
-        comment: req.body.comment,
-        playername: name
-      }
-    }
-
+  else if(req.body.comment.length>200){
+    res.send('comment is too long')
   }
-  );
+  else{
+    await playerModel.findOneAndUpdate({
+      fullname: name
+    },
+    {
+      $addToSet:{
+        comments: {
+          comment: req.body.comment,
+          commenter: req.session.username
+        }
+      }
+  
+    }
+    );
+    await userModel.findOneAndUpdate({
+      username: req.session.username
+    },
+    {
+      $addToSet:{
+        comments: {
+          comment: req.body.comment,
+          playername: name
+        }
+      }
+  
+    }
+    );
+  
+    res.redirect('playerprofile/:'+name)
+  }
 
-  res.redirect('playerprofile/:'+name)
+  
 })
 
 app.post('/edit',async function(req,res){ // 
   var name = req.body.pName
   var userName = req.session.username
-  await playerModel.updateOne({
-    fullname: name,
-    "comments.commenter":userName
-  },
+  if(req.body.comment.length<20)
   {
-    $set:{
-      "comments.$.comment": req.body.comment
-    }
-  },
-  );
-  await userModel.updateOne({
-    username: req.session.username,
-    "comments.playername": name
-  },
-  {
-    $set:{
-      "comments.$.comment": req.body.comment
-    }
-
-  },
-
-  );
-
-  res.redirect('playerprofile/:'+name)
+    res.send('comment is too short')
+  }
+  else if(req.body.comment.length>200){
+    res.send('comment is too long')
+  }
+  else{
+    await playerModel.updateOne({
+      fullname: name,
+      "comments.commenter":userName
+    },
+    {
+      $set:{
+        "comments.$.comment": req.body.comment
+      }
+    },
+    );
+    await userModel.updateOne({
+      username: req.session.username,
+      "comments.playername": name
+    },
+    {
+      $set:{
+        "comments.$.comment": req.body.comment
+      }
+  
+    },
+  
+    );
+  
+    res.redirect('playerprofile/:'+name)
+  }
+  
 })
 
 app.post('/deletecomment', async function(req,res){
