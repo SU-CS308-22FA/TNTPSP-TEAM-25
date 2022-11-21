@@ -405,5 +405,39 @@ app.post('/mainpage', async function(req,res){
   
 })
 
+app.post('/playerprofile/:playername', function(req, res) {
+  //find the player by player name from the database
+  console.log("aaaaa")
+  var name = req.params['playername'].substring(1)
+
+  var query = {fullname: name}
+
+  playerModel.find(query, function (err, playerinfo) {
+    var result = playerinfo[0].comments.findIndex(({ commenter }) => commenter === req.session.username)
+    console.log(result)
+
+    var sortedComments = playerinfo[0].comments.sort((a,b) => (a.commenter > b.commenter) ? 1 : ((b.commenter > a.commenter) ? -1 : 0))
+
+    console.log(sortedComments[0])
+
+    if(result==-1){                 // daha önce yorumu yoksa
+      res.render('playerprofile',{
+        pName: playerinfo[0].fullname,
+        pAge: playerinfo[0].age,
+        standardcomments : sortedComments,
+        commenttype: "add"
+      })
+    }
+    else{                           // daha önce yorumu varsa
+      res.render('playerprofile',{
+        pName: playerinfo[0].fullname,
+        pAge: playerinfo[0].age,
+        standardcomments : sortedComments,
+        commenttype: "edit"
+      })
+    }
+  });
+});
+
 
 app.listen(process.env.PORT || 3001);
