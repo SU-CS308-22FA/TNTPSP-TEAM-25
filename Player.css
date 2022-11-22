@@ -22,6 +22,16 @@
     width: 20%;
 }
 
+.gobackbutton {
+  width: 0;
+	height: 0;
+	border-top: 25px solid transparent;
+	border-right: 50px solid rgb(255, 0, 0);
+	border-bottom: 25px solid transparent;
+}
+
+
+
 .parent {
     margin-left: 28%;
   }

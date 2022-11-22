@@ -277,6 +277,15 @@ app.post('/deleteuser',function(req,res){
   }
 })
 
+app.post('/logout',function(req,res){
+  if(req.session.username){
+    req.session.destroy();
+  }else{
+    res.redirect('/login')
+  }
+})
+
+
 
 app.post('/addcomment',async function(req,res){
   var name = req.body.pName
