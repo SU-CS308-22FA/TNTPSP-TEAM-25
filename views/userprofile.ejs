@@ -25,9 +25,9 @@
                         <label for="userp">Username:  </label> <p name='userp'><%=username%></p>
                         <label for="emailp">Email:</label><p name='emailp'><%=email%></p>
                         <label for="passwordp">Password:</label><p name='passwordp'><%=password%></p>
-                        <a href="/logout">
-                            <button style="float:left; background-color:red;" name="LogoutButton" value="Logout">Logout</button>
-                        </a>
+                        <form action="logout" method="post">
+                            <button style="float:left; background-color:red;"type="submit" name="LogoutButton" value="Logout">Logout</button>
+                        </form>
                     </div>
                     <div style="display: inline-block; vertical-align: top;width: 10%;">
                         <h1> Comments </h1>
