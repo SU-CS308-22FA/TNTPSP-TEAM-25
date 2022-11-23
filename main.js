@@ -49,7 +49,7 @@ app.use(sessions({
     secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
     saveUninitialized:true,
     cookie: { maxAge: oneDay },
-    resave: false
+    resave: true
 }));
 // use res.render to load up an ejs view file
 
@@ -59,6 +59,7 @@ app.get('/', function(req, res){
 })
 
 app.get('/login', function(req, res) {
+  if(req.session) console.log(req.session);
   if(req.session.username && req.session.password){
     res.render('userprofile',{ username: req.session.username, email: req.session.email, password: req.session.password })
   }else{
@@ -106,7 +107,7 @@ app.get('/playerprofile/:playername', function(req, res) {
 });
 
 app.get('/mainpage', function(req, res) {
-  
+
   playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
 
       res.render('mainpage',{
@@ -160,12 +161,11 @@ app.get('/userprofile', function(req, res){
 
     userModel.find({username: req.session.username}, function (err, userinfo) {
       res.render('userprofile',{
-        username: req.session.username, 
-        email: req.session.email, 
+        username: req.session.username,
+        email: req.session.email,
         password: req.session.password,
-
         commentarray: userinfo[0].comments,
-        
+
       })
     });
   }else{
@@ -307,7 +307,7 @@ app.post('/addcomment',async function(req,res){
           commenter: req.session.username
         }
       }
-  
+
     }
     );
     await userModel.findOneAndUpdate({
@@ -320,17 +320,17 @@ app.post('/addcomment',async function(req,res){
           playername: name
         }
       }
-  
+
     }
     );
-  
+
     res.redirect('playerprofile/:'+name)
   }
 
-  
+
 })
 
-app.post('/edit',async function(req,res){ // 
+app.post('/edit',async function(req,res){ //
   var name = req.body.pName
   var userName = req.session.username
   if(req.body.comment.length<20)
@@ -359,14 +359,14 @@ app.post('/edit',async function(req,res){ //
       $set:{
         "comments.$.comment": req.body.comment
       }
-  
+
     },
-  
+
     );
-  
+
     res.redirect('playerprofile/:'+name)
   }
-  
+
 })
 
 app.post('/deletecomment', async function(req,res){
@@ -411,7 +411,7 @@ app.post('/mainpage', async function(req,res){
 
     })
 });
-  
+
 })
 
 app.post('/playerprofile/:playername', function(req, res) {
