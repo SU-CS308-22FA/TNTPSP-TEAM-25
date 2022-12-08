@@ -62,13 +62,10 @@
                     <ol>
                     
                     
-                        <li style="padding: 10px;">dsadsadasd</li>
-                        <li style="padding: 10px;">dsadsadasd</li>
-                        <li style="padding: 10px;">dsadsadasd</li>
-                        <li style="padding: 10px;">dsadsadasd</li>
-                        <li style="padding: 10px;">dsadsadasd</li>
-                        <li style="padding: 10px;">dsadsadasd</li>
-                        <li style="padding: 10px;">dsadsadasd</li>
+                        <%verifiedcomments.forEach(commentobj => {%>
+                            <li style="padding: 10px;"><%=commentobj.commenter%>: &nbsp<%=commentobj.comment%></li>
+
+                        <%})%>
                         
                       </ol>
                 </div>
