@@ -19,7 +19,8 @@ const userSchema = new Schema({
   password: String,
   password2: String,
   email: String,
-  comments : { type : Array , "default" : [] }
+  isVerified: String,
+  comments : { type : Array , "default" : [] },
 });
 
 const userModel = mongoose.model("userModel", userSchema);
@@ -30,11 +31,18 @@ const playerSchema = new Schema({
   fullname: String,
   age: Number,
   comments : { type : Array , "default" : [] },
+  verifiedcomments : { type : Array , "default" : [] },
   pid: Number
 });
 
 const playerModel = mongoose.model("player", playerSchema);
 
+const requestSchema = new Schema({
+  username: String,
+  email: String,
+})
+
+const requestModel = mongoose.model("verifiedrequests", requestSchema);
 
 
 app.set('view engine', 'ejs');
@@ -92,6 +100,7 @@ app.get('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
+        verifiedcomments : playerinfo[0].verifiedcomments, 
         commenttype: "add"
       })
     }
@@ -100,6 +109,7 @@ app.get('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
+        verifiedcomments : playerinfo[0].verifiedcomments, 
         commenttype: "edit"
       })
     }
@@ -188,7 +198,23 @@ app.post('/login', function(req, res) {
         req.session.email = req.body.email
         req.session.password = req.body.password
         req.session.username = user.username
-        res.redirect("/mainpage")
+
+        if(user.isVerified=="yes"){
+          res.redirect("/mainpage")
+        }
+        else{
+          requestModel.findOne({
+            email: req.body.email
+          }).then(
+            res.send("waiting verification")
+          )
+
+          res.redirect("/mainpage")
+
+        }
+        
+
+
 
       }else{
         res.send("Wrong Password");
@@ -212,13 +238,29 @@ app.post('/register', function(req, res) {
     username: req.body.username,
     password : req.body.password,
     password2 : req.body.password2,
-    email: req.body.email
+    email: req.body.email,
+    isVerified: "no",
   });
   if (req.body.password!=req.body.password2) // bakılacak
   {
     res.render("register", {errorMsg: "Password's do not match"})
   }
   else{
+    if(req.body.verified=="yes"){
+      const requestInstance = new requestModel(
+        {
+          username: req.body.username,
+          email: req.body.email,
+        });
+
+        requestInstance.save((err) => {
+        if (err) {
+          console.log(err);
+          res.send("error")
+        }
+      });
+    }
+
     userInstance.save((err) => {
       if (err) {
         console.log(err);
@@ -297,19 +339,45 @@ app.post('/addcomment',async function(req,res){
     res.send('comment is too long')
   }
   else{
-    await playerModel.findOneAndUpdate({
-      fullname: name
-    },
-    {
-      $addToSet:{
-        comments: {
-          comment: req.body.comment,
-          commenter: req.session.username
+
+    await userModel.findOne({
+      username: req.session.username
+    }).then(
+      async (user)=>{
+        if(user.isVerified=="yes"){
+          await playerModel.findOneAndUpdate({
+            fullname: name
+          },
+          {
+              $addToSet:{
+                verifiedcomments: {
+                  comment: req.body.comment,
+                  commenter: req.session.username,
+                }
+              }
+          }
+          );
+        }
+        else{
+          await playerModel.findOneAndUpdate({
+            fullname: name
+          },
+          {
+              $addToSet:{
+                comments: {
+                  comment: req.body.comment,
+                  commenter: req.session.username,
+                }
+              }
+          }
+          );
         }
       }
+    
+    
+    )
 
-    }
-    );
+    
     await userModel.findOneAndUpdate({
       username: req.session.username
     },
