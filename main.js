@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 
 const mongoose = require("mongoose");
+const { query } = require('express');
 
 const mongoDB = "mongodb+srv://deneme:deneme@cluster0.b2biihn.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -142,7 +143,8 @@ app.get('/mainpage', function(req, res) {
 
       res.render('mainpage',{
         arr:playerlist,
-        searchtext: ""
+        searchtext: "",
+        position:""
       })
   });
 });
@@ -596,8 +598,8 @@ app.post('/mainpage', async function(req,res){
   playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
     res.render('mainpage',{
       arr:playerlist,
-      searchtext: req.body.name
-
+      searchtext: req.body.name,
+      position: ""
     })
 });
 
@@ -655,10 +657,24 @@ app.post('/playerprofile/:playername', function(req, res) {
     }
   });
 });
-const player= playerModel.filter()
-const posplayers = player.filter(
-  players =>
-    players.Position )
+
+
+app.post('/filterplayers', async function(req,res){
+
+  //var filterstring = req.body.playerpos
+  //var query = {position: filterstring}
+
+  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+    res.render('mainpage',{
+      arr:playerlist,
+      searchtext: "",
+      position: req.body.position
+    })
+});
+
+})
+
+
 
 
 app.listen(process.env.PORT || 3001);
