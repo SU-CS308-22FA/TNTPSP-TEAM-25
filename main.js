@@ -21,6 +21,7 @@ const userSchema = new Schema({
   email: String,
   isVerified: String,
   comments : { type : Array , "default" : [] },
+
 });
 
 const userModel = mongoose.model("userModel", userSchema);
@@ -86,22 +87,39 @@ app.get('/playerprofile', function(req, res){
 })
 app.get('/playerprofile/:playername', function(req, res) {
   //find the player by player name from the database
-  console.log(req.params['playername'])
   var name = req.params['playername'].substring(1)
 
   var query = {fullname: name}
-
+  
   playerModel.find(query, function (err, playerinfo) {
     var result = playerinfo[0].comments.findIndex(({ commenter }) => commenter === req.session.username)
-    console.log(result)
+    var result2 = playerinfo[0].verifiedcomments.findIndex(({ commenter }) => commenter === req.session.username)
 
-    if(result==-1){                 // daha önce yorumu yoksa
+
+    var size = playerinfo[0].verifiedcomments.length
+    var sum =0;
+    var avg;
+
+    for(let i=0;i<size;i++){
+      sum+= Number(playerinfo[0].verifiedcomments[i]['rating'])
+    }
+
+    if(size!=0){
+      avg = sum/size
+    }
+    else{
+      avg = -1
+    }
+
+
+    if(result==-1 && result2==-1){                 // daha önce yorumu yoksa
       res.render('playerprofile',{
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
         verifiedcomments : playerinfo[0].verifiedcomments, 
-        commenttype: "add"
+        commenttype: "add",
+        average: avg
       })
     }
     else{                           // daha önce yorumu varsa
@@ -110,7 +128,8 @@ app.get('/playerprofile/:playername', function(req, res) {
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
         verifiedcomments : playerinfo[0].verifiedcomments, 
-        commenttype: "edit"
+        commenttype: "edit",
+        average: avg
       })
     }
   });
@@ -135,15 +154,25 @@ app.get('/addcomment', function(req, res) {
   res.render('addcomment');
 });
 
-app.get('/addcomment/:playername', function(req, res) {
+app.get('/addcomment/:playername', async function(req, res) {
   var name = req.params['playername'].substring(1)
 
-  if(req.session){
-    console.log(req.session);
-  }
-  res.render('addcomment',{
-    pName: name
-  });
+  await userModel.findOne({
+    username: req.session.username
+  }).then(
+    (user)=>{
+      if(user.isVerified=="yes"){
+        res.render('addcomment',{pName: name,showrating:"yes"});
+
+      }
+      else{
+        res.render('addcomment',{pName: name,showrating:"no"});
+
+      }
+    }
+  )
+
+  
 });
 
 // EDIT COMMENT PAGE
@@ -153,15 +182,27 @@ app.get('/editcomment', function(req, res) {
   }
   res.render('editcomment');
 });
-app.get('/editcomment/:playername', function(req, res) {
+app.get('/editcomment/:playername',async function(req, res) {
   var name = req.params['playername'].substring(1)
 
-  if(req.session){
-    console.log(req.session);
-  }
-  res.render('editcomment',{
-    pName: name
-  });
+  await userModel.findOne({
+    username: req.session.username
+  }).then(
+    (user)=>{
+      var index = user.comments.findIndex(({ playername }) => playername === name)
+      var usercomment = user.comments[index]['comment']
+      var userrating = user.comments[index]['rating']
+
+      if(user.isVerified=="yes"){
+        res.render('editcomment',{pName: name,showrating:"yes",currentcomment:usercomment,currentrating:userrating});
+
+      }
+      else{
+        res.render('editcomment',{pName: name,showrating:"no",currentcomment:usercomment});
+
+      }
+    }
+  )
 });
 
 app.get('/userprofile', function(req, res){
@@ -203,11 +244,20 @@ app.post('/login', function(req, res) {
           res.redirect("/mainpage")
         }
         else{
+          
+          
           requestModel.findOne({
             email: req.body.email
           }).then(
-            res.send("waiting verification")
+            (user)=>{
+              if(user!=null){
+                res.send("waiting verification")
+
+              }
+            }
+
           )
+
 
           res.redirect("/mainpage")
 
@@ -353,8 +403,9 @@ app.post('/addcomment',async function(req,res){
                 verifiedcomments: {
                   comment: req.body.comment,
                   commenter: req.session.username,
+                  rating: req.body.rating
                 }
-              }
+              },
           }
           );
         }
@@ -377,20 +428,38 @@ app.post('/addcomment',async function(req,res){
     
     )
 
-    
-    await userModel.findOneAndUpdate({
-      username: req.session.username
-    },
-    {
-      $addToSet:{
-        comments: {
-          comment: req.body.comment,
-          playername: name
+    if(req.body.rating!=null){
+      await userModel.findOneAndUpdate({
+        username: req.session.username
+      },
+      {
+        $addToSet:{
+          comments: {
+            comment: req.body.comment,
+            playername: name,
+            rating: req.body.rating
+          }
         }
+  
       }
-
+      );
     }
-    );
+    else{
+      await userModel.findOneAndUpdate({
+        username: req.session.username
+      },
+      {
+        $addToSet:{
+          comments: {
+            comment: req.body.comment,
+            playername: name,
+          }
+        }
+  
+      }
+      );
+    }
+    
 
     res.redirect('playerprofile/:'+name)
   }
@@ -409,23 +478,50 @@ app.post('/edit',async function(req,res){ //
     res.send('comment is too long')
   }
   else{
-    await playerModel.updateOne({
-      fullname: name,
-      "comments.commenter":userName
-    },
-    {
-      $set:{
-        "comments.$.comment": req.body.comment
+
+    await userModel.findOne({
+      username: req.session.username
+    }).then(
+      async (user)=>{
+        if(user.isVerified=="yes"){
+          await playerModel.updateOne({
+            fullname: name,
+            "verifiedcomments.commenter":userName
+          },
+          {
+            $set:{
+              "verifiedcomments.$.comment": req.body.comment,
+              "verifiedcomments.$.rating": req.body.rating
+            }
+          },
+          );
+        }
+        else{
+          await playerModel.updateOne({
+            fullname: name,
+            "comments.commenter":userName
+          },
+          {
+            $set:{
+              "comments.$.comment": req.body.comment
+            }
+          },
+          );
+        }
       }
-    },
-    );
+
+    )
+
+
     await userModel.updateOne({
       username: req.session.username,
       "comments.playername": name
     },
     {
       $set:{
-        "comments.$.comment": req.body.comment
+        "comments.$.comment": req.body.comment,
+        "comments.$.rating": req.body.rating,
+
       }
 
     },
@@ -439,18 +535,42 @@ app.post('/edit',async function(req,res){ //
 
 app.post('/deletecomment', async function(req,res){
   var name = req.body.pName
-  await playerModel.updateOne({
-    fullname: name
-  },
-  {
-    $pull:{
-      comments: {
-        commenter: req.session.username
+
+  await userModel.findOne({
+    username: req.session.username
+  }).then(
+    async (user)=>{
+      if(user.isVerified=="yes"){
+        await playerModel.updateOne({
+          fullname: name
+        },
+        {
+          $pull:{
+            verifiedcomments: {
+              commenter: req.session.username
+            }
+          }
+      
+        }
+        );
+      }
+      else{
+        await playerModel.updateOne({
+          fullname: name
+        },
+        {
+          $pull:{
+            comments: {
+              commenter: req.session.username
+            }
+          }
+      
+        }
+        );
       }
     }
 
-  }
-  );
+  )
   await userModel.updateOne({
     username: req.session.username
   },
@@ -497,12 +617,29 @@ app.post('/playerprofile/:playername', function(req, res) {
 
     console.log(sortedComments[0])
 
+    var size = playerinfo[0].verifiedcomments.length
+    var sum =0;
+    var avg;
+
+    for(let i=0;i<size;i++){
+      sum+= Number(playerinfo[0].verifiedcomments[i]['rating'])
+    }
+
+    if(size!=0){
+      avg = sum/size
+    }
+    else{
+      avg = -1
+    }
+
     if(result==-1){                 // daha önce yorumu yoksa
       res.render('playerprofile',{
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : sortedComments,
-        commenttype: "add"
+        verifiedcomments : playerinfo[0].verifiedcomments,
+        commenttype: "add",
+        average: avg
       })
     }
     else{                           // daha önce yorumu varsa
@@ -510,7 +647,9 @@ app.post('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : sortedComments,
-        commenttype: "edit"
+        verifiedcomments : playerinfo[0].verifiedcomments,
+        commenttype: "edit",
+        average: avg
       })
     }
   });
