@@ -18,11 +18,21 @@
             <input type="text" id="name" name="name" style="width: 300px;height:30px">
                 
             </td>
-            <td style="width: 40%;text-align: left;">
+            <td style="width: 10%;text-align: left;">
             <input type="image" src="images/searchimage.png" style="width: 50px;height:50px" alt="submit"> </input>
             </form>
             </td>
+            <td>
+            <form action="/filterplayers" method="post">
+                <input type="submit" name ="position" value="GK">
+                <input type="submit" name ="position" value="DF">
+                <input type="submit" name ="position" value="MF">
+                <input type="submit" name ="position" value="ST">
 
+            </form>
+            
+            
+            </td>
         </tr>
     </table>
     <div style="width: 100%;">
@@ -37,12 +47,23 @@
                     
                 <%arr.forEach(player => {%>
                     <% if(player.fullname.search(searchtext)!=-1){ %>
-                        <a href="/playerprofile/:<%= player.fullname%>" >
-                            <button class="playerbutton">
-                                <img src="images/userimage.jpg"   width="200px" height="200px">
-                                <p style="font-size: 15px;" > <%= player.fullname%></p> 
-                            </button>
-                        </a>
+                        <% if(position=="") {%>
+                            <a href="/playerprofile/:<%= player.fullname%>" >
+                                <button class="playerbutton">
+                                    <img src="images/userimage.jpg"   width="200px" height="200px">
+                                    <p style="font-size: 15px;" > <%= player.fullname%></p> 
+                                </button>
+                            </a>
+                        <%} else{%>   
+                            <% if(player.position==position){ %>
+                                <a href="/playerprofile/:<%= player.fullname%>" >
+                                    <button class="playerbutton">
+                                        <img src="images/userimage.jpg"   width="200px" height="200px">
+                                        <p style="font-size: 15px;" > <%= player.fullname%></p> 
+                                    </button>
+                                </a>
+                            <% }%>
+                        <% } %>
                     <% }%>
                 <%})%>
                     
