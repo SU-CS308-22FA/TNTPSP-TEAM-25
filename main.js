@@ -33,7 +33,8 @@ const playerSchema = new Schema({
   age: Number,
   comments : { type : Array , "default" : [] },
   verifiedcomments : { type : Array , "default" : [] },
-  pid: Number
+  pid: Number,
+  position: String
 });
 
 const playerModel = mongoose.model("player", playerSchema);
@@ -654,6 +655,10 @@ app.post('/playerprofile/:playername', function(req, res) {
     }
   });
 });
+const player= playerModel.filter()
+const posplayers = player.filter(
+  players =>
+    players.Position )
 
 
 app.listen(process.env.PORT || 3001);
