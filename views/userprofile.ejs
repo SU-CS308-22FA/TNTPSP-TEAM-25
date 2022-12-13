@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+    <link href="/Player.css" rel="stylesheet" type="text/css">
     <meta charset="utf-8">
 
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -68,6 +68,13 @@
               <button style="margin-top:30px; background-color:red;" class="btn btn-lg btn-primary btn-block" name="Submit" value="Login" type="Submit">Delete User</button>
             </form>
         </div>
+        <br></br>
+        <form action="/report" method="post">
+            <textarea id="comment" class="commenttextarea" name="reportmsg" rows="5" cols="40" minlength="20" maxlength="200" required placeholder="Report the bug" style="resize: none;margin-left: 30%;"></textarea>
+            <button style="margin-top:30px; background-color:red;" class="buttonred" name="Submit" value="Login" type="Submit">Submit Report</button>
+
+
+        </form>
     </div>
 </body>
 </html>
