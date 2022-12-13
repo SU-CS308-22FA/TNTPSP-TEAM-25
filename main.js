@@ -34,7 +34,8 @@ const playerSchema = new Schema({
   age: Number,
   comments : { type : Array , "default" : [] },
   verifiedcomments : { type : Array , "default" : [] },
-  pid: Number
+  pid: Number,
+  position:String
 });
 
 const playerModel = mongoose.model("player", playerSchema);
@@ -46,6 +47,12 @@ const requestSchema = new Schema({
 
 const requestModel = mongoose.model("verifiedrequests", requestSchema);
 
+const reportSchema = new Schema({
+  username: String,
+  reportmessage: String,
+})
+
+const reportModel = mongoose.model("bugreports", reportSchema);
 
 app.set('view engine', 'ejs');
 app.use(express.json());       // to support JSON-encoded bodies
@@ -147,6 +154,28 @@ app.get('/mainpage', function(req, res) {
       })
   });
 });
+app.post('/report', async function(req,res){
+
+  //var filterstring = req.body.playerpos
+  //var query = {position: filterstring}
+
+  var myobj = { username: req.session.username, reportmessage:req.body.reportmsg};
+  await reportModel.insertMany(myobj, function(err, res) {
+    if (err) throw err;
+    console.log("1 document inserted");
+  });
+
+  userModel.find({username: req.session.username}, function (err, userinfo) {
+    res.render('userprofile',{
+      username: req.session.username,
+      email: req.session.email,
+      password: req.session.password,
+      commentarray: userinfo[0].comments,
+
+    })
+  });
+
+})
 
 // ADD COMMENT PAGE
 app.get('/addcomment', function(req, res) {
@@ -603,6 +632,22 @@ app.post('/mainpage', async function(req,res){
       searchtext: req.body.name,
       position:""
 
+    })
+});
+
+})
+app.post('/filterplayers', function(req,res){
+
+  //var filterstring = req.body.playerpos
+  //var query = {position: filterstring}
+  console.log(req.body.position)
+
+
+  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+    res.render('mainpage',{
+      arr:playerlist,
+      searchtext: "",
+      position: req.body.position
     })
 });
 
