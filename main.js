@@ -113,7 +113,7 @@ app.get('/playerprofile/:playername', function(req, res) {
     }
 
     if(size!=0){
-      avg = sum/size
+      avg = (sum/size).toFixed(1)
     }
     else{
       avg = -1
@@ -698,7 +698,7 @@ app.post('/playerprofile/:playername', function(req, res) {
     }
 
     if(size!=0){
-      avg = sum/size
+      avg = (sum/size).toFixed(1)
     }
     else{
       avg = -1
