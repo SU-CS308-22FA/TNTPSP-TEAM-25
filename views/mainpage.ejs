@@ -30,6 +30,11 @@
                 <input type="submit" name ="position" value="ST">
 
             </form>
+
+            <form action="/sortedplayers" method="post">
+                <input style="margin-left: 40%;margin-right: 40%;" type="submit" value="Sort Players">
+            </form>
+            
             
             
             </td>
@@ -47,7 +52,7 @@
                     
                 <%arr.forEach(player => {%>
                     <% if(player.fullname.search(searchtext)!=-1){ %>
-                        <% if(position=="") {%>
+                        <% if(locals.position=="") {%>
                             <a href="/playerprofile/:<%= player.fullname%>" >
                                 <button class="playerbutton">
                                     <img src="images/userimage.jpg"   width="200px" height="200px">
@@ -55,7 +60,7 @@
                                 </button>
                             </a>
                         <%} else{%>   
-                            <% if(player.position==position){ %>
+                            <% if(player.position==locals.position){ %>
                                 <a href="/playerprofile/:<%= player.fullname%>" >
                                     <button class="playerbutton">
                                         <img src="images/userimage.jpg"   width="200px" height="200px">

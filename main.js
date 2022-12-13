@@ -34,8 +34,7 @@ const playerSchema = new Schema({
   age: Number,
   comments : { type : Array , "default" : [] },
   verifiedcomments : { type : Array , "default" : [] },
-  pid: Number,
-  position: String
+  pid: Number
 });
 
 const playerModel = mongoose.model("player", playerSchema);
@@ -46,13 +45,6 @@ const requestSchema = new Schema({
 })
 
 const requestModel = mongoose.model("verifiedrequests", requestSchema);
-
-const reportSchema = new Schema({
-  username:String,
-  reportmessage:String
-})
-
-const reportModel = mongoose.model("bugreports", reportSchema);
 
 
 app.set('view engine', 'ejs');
@@ -602,11 +594,36 @@ app.post('/deletecomment', async function(req,res){
 app.post('/mainpage', async function(req,res){
 
   console.log(req.body.name)
-  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+  playerModel.find({}, function (err,playerlist) { // tüm oyuncuları bulup listeyi aktarır
+
+    
+
     res.render('mainpage',{
-      arr:playerlist,
+      arr: playerlist,
       searchtext: req.body.name,
-      position: ""
+      position:""
+
+    })
+});
+
+})
+
+app.post('/sortedplayers', async function(req,res){
+
+  console.log(req.body.name)
+  playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
+
+    
+
+    var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
+
+    console.log(sortedPlayers)
+
+    res.render('mainpage',{
+      arr:sortedPlayers,
+      searchtext: "",
+      position:""
+
     })
 });
 
@@ -664,45 +681,6 @@ app.post('/playerprofile/:playername', function(req, res) {
     }
   });
 });
-
-
-app.post('/filterplayers', async function(req,res){
-
-  //var filterstring = req.body.playerpos
-  //var query = {position: filterstring}
-
-  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
-    res.render('mainpage',{
-      arr:playerlist,
-      searchtext: "",
-      position: req.body.position
-    })
-});
-
-})
-
-app.post('/report', async function(req,res){
-
-  //var filterstring = req.body.playerpos
-  //var query = {position: filterstring}
-
-  var myobj = { username: req.session.username, reportmessage:req.body.reportmsg};
-  await reportModel.insertMany(myobj, function(err, res) {
-    if (err) throw err;
-    console.log("1 document inserted");
-  });
-
-  userModel.find({username: req.session.username}, function (err, userinfo) {
-    res.render('userprofile',{
-      username: req.session.username,
-      email: req.session.email,
-      password: req.session.password,
-      commentarray: userinfo[0].comments,
-
-    })
-  });
-
-})
 
 
 app.listen(process.env.PORT || 3001);
