@@ -52,7 +52,7 @@
                     
                 <%arr.forEach(player => {%>
                     <% if(player.fullname.search(searchtext)!=-1){ %>
-                        <% if(locals.position=="") {%>
+                        <% if(position=="") {%>
                             <a href="/playerprofile/:<%= player.fullname%>" >
                                 <button class="playerbutton">
                                     <img src="images/userimage.jpg"   width="200px" height="200px">
@@ -60,7 +60,7 @@
                                 </button>
                             </a>
                         <%} else{%>   
-                            <% if(player.position==locals.position){ %>
+                            <% if(player.position==position){ %>
                                 <a href="/playerprofile/:<%= player.fullname%>" >
                                     <button class="playerbutton">
                                         <img src="images/userimage.jpg"   width="200px" height="200px">
