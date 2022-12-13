@@ -47,6 +47,13 @@ const requestSchema = new Schema({
 
 const requestModel = mongoose.model("verifiedrequests", requestSchema);
 
+const reportSchema = new Schema({
+  username:String,
+  reportmessage:String
+})
+
+const reportModel = mongoose.model("bugreports", reportSchema);
+
 
 app.set('view engine', 'ejs');
 app.use(express.json());       // to support JSON-encoded bodies
@@ -674,7 +681,28 @@ app.post('/filterplayers', async function(req,res){
 
 })
 
+app.post('/report', async function(req,res){
 
+  //var filterstring = req.body.playerpos
+  //var query = {position: filterstring}
+
+  var myobj = { username: req.session.username, reportmessage:req.body.reportmsg};
+  await reportModel.insertMany(myobj, function(err, res) {
+    if (err) throw err;
+    console.log("1 document inserted");
+  });
+
+  userModel.find({username: req.session.username}, function (err, userinfo) {
+    res.render('userprofile',{
+      username: req.session.username,
+      email: req.session.email,
+      password: req.session.password,
+      commentarray: userinfo[0].comments,
+
+    })
+  });
+
+})
 
 
 app.listen(process.env.PORT || 3001);
