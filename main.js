@@ -207,6 +207,8 @@ app.get('/addcomment/:playername', async function(req, res) {
 
 });
 
+
+
 // EDIT COMMENT PAGE
 app.get('/editcomment', function(req, res) {
   if(req.session){
@@ -682,8 +684,6 @@ app.post('/sortedplayers', async function(req,res){
   console.log(req.body.name)
   playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
 
-
-
     var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
 
     console.log(sortedPlayers)
@@ -696,6 +696,12 @@ app.post('/sortedplayers', async function(req,res){
     })
 });
 
+})
+
+app.post('/verify', function(req, res) {
+  userModel.find({}, function (err, users) { // tüm oyuncuları bulup listeyi aktarır
+    console.log(users);
+  })
 })
 
 app.post('/playerprofile/:playername', function(req, res) {
