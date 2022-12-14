@@ -50,7 +50,21 @@
         </div >
         <div style="width: 88%;border:5px solid red;padding-block: 10px; display: inline-block;">
             <table id="customers">
-            
+                <tr>
+                  <th>Full Name</th>
+                  <th>Total Ratings</th>
+                  <th>Rating</th>
+                </tr>
+                <%arr.forEach(player => {%>
+                  <tr>
+                    <td><%=player.fullname%></td>
+                    <td><%=player.totalRatings%></td>
+                    <td><%=player.avgRat%></td>
+                  </tr>
+
+                <%})%>
+
+
 
 
             </table>
