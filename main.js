@@ -667,6 +667,7 @@ app.get('/rankings', function(req, res){
           obj = {
             'fullname' : playerinfo[player].fullname,
             'avgRat' : (totalRat/totalComments).toFixed(2),
+            'ratingsgained' : totalRat,
             'totalRatings' : totalComments
           }
           emptyArr.push(obj)

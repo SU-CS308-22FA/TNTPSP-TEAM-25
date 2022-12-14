@@ -53,13 +53,15 @@
                 <tr>
                   <th>Full Name</th>
                   <th>Total Ratings</th>
-                  <th>Rating</th>
+                  <th>Ratings Gained</th>
+                  <th>Rating Average</th>
                 </tr>
                 <%arr.forEach(player => {%>
                   <a href="#">
                   <tr>
                     <td><%=player.fullname%></td>
                     <td><%=player.totalRatings%></td>
+                    <td><%=player.ratingsgained%></td>
                     <td><%=player.avgRat%></td>
                   </tr>
                   </a>
