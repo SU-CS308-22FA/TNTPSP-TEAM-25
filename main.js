@@ -188,24 +188,30 @@ app.get('/addcomment', function(req, res) {
 });
 
 app.get('/addcomment/:playername', async function(req, res) {
-  var name = req.params['playername'].substring(1)
+  if(!req.session.username){
+    res.redirect('/login')
+  }else{
+    var name = req.params['playername'].substring(1)
 
-  await userModel.findOne({
-    username: req.session.username
-  }).then(
-    (user)=>{
-      if(user.isVerified=="yes"){
-        res.render('addcomment',{pName: name,showrating:"yes"});
+    await userModel.findOne({
+      username: req.session.username
+    }).then(
+      (user)=>{
+        if(user.isVerified=="yes"){
+          res.render('addcomment',{pName: name,showrating:"yes"});
 
+        }
+        else{
+          res.render('addcomment',{pName: name,showrating:"no"});
+
+        }
       }
-      else{
-        res.render('addcomment',{pName: name,showrating:"no"});
-
-      }
-    }
-  )
+    )
+  }
 
 });
+
+
 
 // EDIT COMMENT PAGE
 app.get('/editcomment', function(req, res) {
@@ -215,26 +221,30 @@ app.get('/editcomment', function(req, res) {
   res.render('editcomment');
 });
 app.get('/editcomment/:playername',async function(req, res) {
-  var name = req.params['playername'].substring(1)
+  if(!req.session.username){
+    res.redirect('/login')
+  }else{
+    var name = req.params['playername'].substring(1)
 
-  await userModel.findOne({
-    username: req.session.username
-  }).then(
-    (user)=>{
-      var index = user.comments.findIndex(({ playername }) => playername === name)
-      var usercomment = user.comments[index]['comment']
-      var userrating = user.comments[index]['rating']
+    await userModel.findOne({
+      username: req.session.username
+    }).then(
+      (user)=>{
+        var index = user.comments.findIndex(({ playername }) => playername === name)
+        var usercomment = user.comments[index]['comment']
+        var userrating = user.comments[index]['rating']
 
-      if(user.isVerified=="yes"){
-        res.render('editcomment',{pName: name,showrating:"yes",currentcomment:usercomment,currentrating:userrating});
+        if(user.isVerified=="yes"){
+          res.render('editcomment',{pName: name,showrating:"yes",currentcomment:usercomment,currentrating:userrating});
 
+        }
+        else{
+          res.render('editcomment',{pName: name,showrating:"no",currentcomment:usercomment});
+
+        }
       }
-      else{
-        res.render('editcomment',{pName: name,showrating:"no",currentcomment:usercomment});
-
-      }
-    }
-  )
+    )
+  }
 });
 
 app.get('/userprofile', function(req, res){
@@ -283,17 +293,12 @@ app.post('/login', function(req, res) {
           }).then(
             (user)=>{
               if(user!=null){
-                res.send("waiting verification")
+                res.redirect("/mainpage")
 
               }
             }
 
-          )
-
-
-          res.redirect("/mainpage")
-
-        }
+          )}
 
 
       }else{
@@ -424,7 +429,7 @@ app.post('/addcomment',async function(req,res){
       username: req.session.username
     }).then(
       async (user)=>{
-        if(user.isVerified=="yes"){
+        if(user.isVerified=="yes" || (!"isVerified" in user)){
           await playerModel.findOneAndUpdate({
             fullname: name
           },
@@ -440,18 +445,7 @@ app.post('/addcomment',async function(req,res){
           );
         }
         else{
-          await playerModel.findOneAndUpdate({
-            fullname: name
-          },
-          {
-              $addToSet:{
-                comments: {
-                  comment: req.body.comment,
-                  commenter: req.session.username,
-                }
-              }
-          }
-          );
+          res.send("wait to be verified")
         }
       }
 
@@ -687,8 +681,6 @@ app.post('/sortedplayers', async function(req,res){
   console.log(req.body.name)
   playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
 
-
-
     var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
 
     console.log(sortedPlayers)
@@ -701,6 +693,23 @@ app.post('/sortedplayers', async function(req,res){
     })
 });
 
+})
+app.get('/verify', function(req, res) {
+  userModel.find({isVerified: "no"}, function (err, users) {
+    res.render('verification', {users:users})
+  })
+
+})
+
+
+app.post('/verify', function(req, res) {
+  userModel.findOneAndUpdate({email: req.body.email}, {isVerified: "yes"}, (err, userSample) => {
+    if(err){
+      res.send(err);
+    }else{
+      res.redirect("/verify")
+    }
+  })
 })
 
 app.post('/playerprofile/:playername', function(req, res) {
