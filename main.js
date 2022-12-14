@@ -698,7 +698,10 @@ app.post('/sortedplayers', async function(req,res){
 
 })
 app.get('/verify', function(req, res) {
-  res.render('verification')
+  userModel.find({isVerified: "no"}, function (err, users) {
+    res.render('verification', {users:users})
+  })
+
 })
 
 
