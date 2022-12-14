@@ -324,7 +324,6 @@ app.post('/register', function(req, res) {
     password : req.body.password,
     password2 : req.body.password2,
     email: req.body.email,
-    isVerified: "no",
   });
   if (req.body.password!=req.body.password2) // bakılacak
   {
@@ -344,17 +343,36 @@ app.post('/register', function(req, res) {
           res.send("error")
         }
       });
+      const userInstanceNew = new userModel(
+      {
+        username: req.body.username,
+        password : req.body.password,
+        password2 : req.body.password2,
+        email: req.body.email,
+        isVerified: "no",
+      });
+      userInstanceNew.save((err) => {
+        if (err) {
+          console.log(err);
+          res.send("error")
+        }else{
+          res.redirect('/login')
+
+        }
+      });
+    }else{
+      userInstance.save((err) => {
+        if (err) {
+          console.log(err);
+          res.send("error")
+        }else{
+          res.redirect('/login')
+
+        }
+      });
     }
 
-    userInstance.save((err) => {
-      if (err) {
-        console.log(err);
-        res.send("error")
-      }else{
-        res.redirect('/login')
 
-      }
-    });
   }
 
 });
