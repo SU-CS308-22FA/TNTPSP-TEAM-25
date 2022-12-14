@@ -283,22 +283,8 @@ app.post('/login', function(req, res) {
         req.session.password = req.body.password
         req.session.username = user.username
 
-        if(user.isVerified=="yes"){
-          res.redirect("/mainpage")
-        }
-        else{
+        res.redirect("/mainpage")
 
-          requestModel.findOne({
-            email: req.body.email
-          }).then(
-            (user)=>{
-              if(user!=null){
-                res.redirect("/mainpage")
-
-              }
-            }
-
-          )}
 
 
       }else{
