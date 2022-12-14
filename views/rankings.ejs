@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="/Player.css" rel="stylesheet" type="text/css">
+    <link href="/ranks.css" rel="stylesheet" type="text/css">
+
+</head>
+<body >
+    <table style="border: 5px solid red; width:100%;">
+        <tr>
+            <td style="width: 10%;">
+                <a href="/userprofile">
+                    <button><img src="images/userimage.jpg"  width="100px" height="100px"></button>
+                </a>
+
+
+            </td>
+            <td style="width:50% ;text-align: right;">
+            <form action="/mainpage" method="post" >
+            <input type="text" id="name" name="name" style="width: 300px;height:30px">
+
+            </td>
+            <td style="width: 10%;text-align: left;">
+            <input type="image" src="images/searchimage.png" style="width: 50px;height:50px" alt="submit"> </input>
+            </form>
+            </td>
+            <td>
+            <form action="/filterplayers" method="post">
+                <input type="submit" name ="position" value="GK">
+                <input type="submit" name ="position" value="DF">
+                <input type="submit" name ="position" value="MF">
+                <input type="submit" name ="position" value="ST">
+
+            </form>
+
+            <form action="/sortedplayers" method="post">
+                <input style="margin-left: 40%;margin-right: 40%;" type="submit" value="Sort Players">
+            </form>
+
+
+
+            </td>
+        </tr>
+    </table>
+    <div style="width: 100%;">
+        <div style="width: 10%;border:5px solid red;padding-block: 10px;display: inline-block;vertical-align: top;">
+          <a href="/mainpage"> <button style="width: 100%;height:30px">players</button></a>
+            <button style="width: 100%;height: 30px;">rankings</button>
+
+        </div >
+        <div style="width: 88%;border:5px solid red;padding-block: 10px; display: inline-block;">
+            <table id="customers">
+            
+
+
+            </table>
+
+
+        </div>
+    </div>
+
+</body>
+
+</html>
