@@ -710,7 +710,7 @@ app.post('/verify', function(req, res) {
     if(err){
       res.send(err);
     }else{
-      res.render("verification", {msg: "verified"})
+      res.redirect("/verify")
     }
   })
 })
