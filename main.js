@@ -188,22 +188,26 @@ app.get('/addcomment', function(req, res) {
 });
 
 app.get('/addcomment/:playername', async function(req, res) {
-  var name = req.params['playername'].substring(1)
+  if(!req.session.username){
+    res.redirect('/login')
+  }else{
+    var name = req.params['playername'].substring(1)
 
-  await userModel.findOne({
-    username: req.session.username
-  }).then(
-    (user)=>{
-      if(user.isVerified=="yes"){
-        res.render('addcomment',{pName: name,showrating:"yes"});
+    await userModel.findOne({
+      username: req.session.username
+    }).then(
+      (user)=>{
+        if(user.isVerified=="yes"){
+          res.render('addcomment',{pName: name,showrating:"yes"});
 
+        }
+        else{
+          res.render('addcomment',{pName: name,showrating:"no"});
+
+        }
       }
-      else{
-        res.render('addcomment',{pName: name,showrating:"no"});
-
-      }
-    }
-  )
+    )
+  }
 
 });
 
