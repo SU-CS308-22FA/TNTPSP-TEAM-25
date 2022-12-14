@@ -2,6 +2,8 @@
 <html>
 <head>
     <link href="/Player.css" rel="stylesheet" type="text/css">
+    <link href="/ranks.css" rel="stylesheet" type="text/css">
+
 </head>
 <body >
     <table style="border: 5px solid red; width:100%;">
@@ -10,9 +12,8 @@
                 <a href="/userprofile">
                     <button><img src="images/userimage.jpg"  width="100px" height="100px"></button>
                 </a>
-                <%if(locals.verifMsg){%>
-                <p><%=verifMsg%></p>
-                <%}%>
+
+
             </td>
             <td style="width:50% ;text-align: right;">
             <form action="/mainpage" method="post" >
@@ -36,6 +37,8 @@
                 <input style="margin-left: 40%;margin-right: 40%;" type="submit" value="Sort Players">
             </form>
 
+
+
             </td>
         </tr>
     </table>
@@ -44,46 +47,35 @@
           <a href="/mainpage"> <button style="width: 100%;height:30px">players</button></a>
             <a href="/rankings">  <button style="width: 100%;height: 30px;">rankings</button></a>
 
-
-
         </div >
         <div style="width: 88%;border:5px solid red;padding-block: 10px; display: inline-block;">
-            <table >
+            <table id="customers">
                 <tr>
-                  <%if(locals.arr){%>
-                  <%arr.forEach(player => {%>
-                      <% if(player.fullname.search(searchtext)!=-1){ %>
-                          <% if(position=="") {%>
-                              <a href="/playerprofile/:<%= player.fullname%>" >
-                                  <button class="playerbutton">
-                                      <img src="images/userimage.jpg"   width="200px" height="200px">
-                                      <p style="font-size: 15px;" > <%= player.fullname%></p>
-                                  </button>
-                              </a>
-                          <%} else{%>
-                              <% if(player.position==position){ %>
-                                  <a href="/playerprofile/:<%= player.fullname%>" >
-                                      <button class="playerbutton">
-                                          <img src="images/userimage.jpg"   width="200px" height="200px">
-                                          <p style="font-size: 15px;" > <%= player.fullname%></p>
-
-                                      </button>
-                                  </a>
-                              <% }%>
-                          <% } %>
-                      <% }%>
-                  <%})%>
-                  <%}%>
-
+                  <th>Full Name</th>
+                  <th>Total Ratings</th>
+                  <th>Ratings Gained</th>
+                  <th>Rating Average</th>
                 </tr>
+                <%arr.forEach(player => {%>
+                  <a href="#">
+                  <tr>
+                    <td><%=player.fullname%></td>
+                    <td><%=player.totalRatings%></td>
+                    <td><%=player.ratingsgained%></td>
+                    <td><%=player.avgRat%></td>
+                  </tr>
+                  </a>
+                <%})%>
+
+
 
 
             </table>
+
 
         </div>
     </div>
 
 </body>
-
 
 </html>
