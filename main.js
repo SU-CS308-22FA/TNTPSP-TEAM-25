@@ -671,6 +671,11 @@ app.get('/rankings', function(req, res){
           }
           emptyArr.push(obj)
         }
+        for(l in emptyArr){
+          if( isNaN(emptyArr[l].avgRat) ){
+            emptyArr[l].avgRat = 0
+          }
+        }
   })
 })
 
