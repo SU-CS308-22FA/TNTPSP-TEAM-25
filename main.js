@@ -221,26 +221,30 @@ app.get('/editcomment', function(req, res) {
   res.render('editcomment');
 });
 app.get('/editcomment/:playername',async function(req, res) {
-  var name = req.params['playername'].substring(1)
+  if(!req.session.username){
+    res.redirect('/login')
+  }else{
+    var name = req.params['playername'].substring(1)
 
-  await userModel.findOne({
-    username: req.session.username
-  }).then(
-    (user)=>{
-      var index = user.comments.findIndex(({ playername }) => playername === name)
-      var usercomment = user.comments[index]['comment']
-      var userrating = user.comments[index]['rating']
+    await userModel.findOne({
+      username: req.session.username
+    }).then(
+      (user)=>{
+        var index = user.comments.findIndex(({ playername }) => playername === name)
+        var usercomment = user.comments[index]['comment']
+        var userrating = user.comments[index]['rating']
 
-      if(user.isVerified=="yes"){
-        res.render('editcomment',{pName: name,showrating:"yes",currentcomment:usercomment,currentrating:userrating});
+        if(user.isVerified=="yes"){
+          res.render('editcomment',{pName: name,showrating:"yes",currentcomment:usercomment,currentrating:userrating});
 
+        }
+        else{
+          res.render('editcomment',{pName: name,showrating:"no",currentcomment:usercomment});
+
+        }
       }
-      else{
-        res.render('editcomment',{pName: name,showrating:"no",currentcomment:usercomment});
-
-      }
-    }
-  )
+    )
+  }
 });
 
 app.get('/userprofile', function(req, res){
