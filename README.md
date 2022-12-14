@@ -1,7 +1,7 @@
 # TNTPSP
 Turkish National Team Player Selection Platform
 
-https://whispering-cove-38859.herokuapp.com/login
+https://whispering-cove-38859.herokuapp.com/
 
 TNTPSP is a web application that is a social media platform to guide Turkish Football Federation about national football team player selection. Users can express their opnions about Turkish players and see others opinions. Also, verified users can give a rating to players and these ratings are shown to users in the ranking page. This platform will help to sustain peaceful environment during national team player selection.
 
