@@ -10,8 +10,9 @@
                 <a href="/userprofile">
                     <button><img src="images/userimage.jpg"  width="100px" height="100px"></button>
                 </a>
-
-
+                <%if(locals.verifMsg){%>
+                <p><%=verifMsg%></p>
+                <%}%>
             </td>
             <td style="width:50% ;text-align: right;">
             <form action="/mainpage" method="post" >
@@ -49,29 +50,30 @@
         <div style="width: 88%;border:5px solid red;padding-block: 10px; display: inline-block;">
             <table >
                 <tr>
+                  <%if(locals.arr){%>
+                  <%arr.forEach(player => {%>
+                      <% if(player.fullname.search(searchtext)!=-1){ %>
+                          <% if(position=="") {%>
+                              <a href="/playerprofile/:<%= player.fullname%>" >
+                                  <button class="playerbutton">
+                                      <img src="images/userimage.jpg"   width="200px" height="200px">
+                                      <p style="font-size: 15px;" > <%= player.fullname%></p>
+                                  </button>
+                              </a>
+                          <%} else{%>
+                              <% if(player.position==position){ %>
+                                  <a href="/playerprofile/:<%= player.fullname%>" >
+                                      <button class="playerbutton">
+                                          <img src="images/userimage.jpg"   width="200px" height="200px">
+                                          <p style="font-size: 15px;" > <%= player.fullname%></p>
 
-                <%arr.forEach(player => {%>
-                    <% if(player.fullname.search(searchtext)!=-1){ %>
-                        <% if(position=="") {%>
-                            <a href="/playerprofile/:<%= player.fullname%>" >
-                                <button class="playerbutton">
-                                    <img src="images/userimage.jpg"   width="200px" height="200px">
-                                    <p style="font-size: 15px;" > <%= player.fullname%></p>
-                                </button>
-                            </a>
-                        <%} else{%>
-                            <% if(player.position==position){ %>
-                                <a href="/playerprofile/:<%= player.fullname%>" >
-                                    <button class="playerbutton">
-                                        <img src="images/userimage.jpg"   width="200px" height="200px">
-                                        <p style="font-size: 15px;" > <%= player.fullname%></p>
-
-                                    </button>
-                                </a>
-                            <% }%>
-                        <% } %>
-                    <% }%>
-                <%})%>
+                                      </button>
+                                  </a>
+                              <% }%>
+                          <% } %>
+                      <% }%>
+                  <%})%>
+                  <%}%>
 
                 </tr>
 
