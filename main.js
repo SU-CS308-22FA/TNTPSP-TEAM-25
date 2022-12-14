@@ -656,6 +656,21 @@ app.post('/filterplayers', function(req,res){
 app.get('/rankings', function(req, res){
   playerModel.find({}, function (err, playerinfo) {
         emptyArr = []
+
+        for (player in playerinfo) {
+        // code block to be executed
+          totalRat = 0
+          totalComments = playerinfo[player].verifiedcomments.length
+          for (k in playerinfo[player].verifiedcomments){
+              totalRat += parseFloat(playerinfo[player].verifiedcomments[k].rating)
+          }
+          obj = {
+            'fullname' : playerinfo[player].fullname,
+            'avgRat' : (totalRat/totalComments).toFixed(2),
+            'totalRatings' : totalComments
+          }
+          emptyArr.push(obj)
+        }
   })
 })
 
