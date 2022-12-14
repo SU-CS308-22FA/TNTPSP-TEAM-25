@@ -653,7 +653,11 @@ app.post('/filterplayers', function(req,res){
 });
 
 })
-
+app.get('/rankings', function(req, res){
+  playerModel.find({}, function (err, playerinfo) {
+        emptyArr = []
+  })
+})
 
 app.post('/sortedplayers', async function(req,res){
 
