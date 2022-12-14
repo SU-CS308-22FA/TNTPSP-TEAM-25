@@ -98,7 +98,7 @@ app.get('/playerprofile/:playername', function(req, res) {
   var name = req.params['playername'].substring(1)
 
   var query = {fullname: name}
-  
+
   playerModel.find(query, function (err, playerinfo) {
     var result = playerinfo[0].comments.findIndex(({ commenter }) => commenter === req.session.username)
     var result2 = playerinfo[0].verifiedcomments.findIndex(({ commenter }) => commenter === req.session.username)
@@ -125,7 +125,7 @@ app.get('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
-        verifiedcomments : playerinfo[0].verifiedcomments, 
+        verifiedcomments : playerinfo[0].verifiedcomments,
         commenttype: "add",
         average: avg
       })
@@ -135,7 +135,7 @@ app.get('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
-        verifiedcomments : playerinfo[0].verifiedcomments, 
+        verifiedcomments : playerinfo[0].verifiedcomments,
         commenttype: "edit",
         average: avg
       })
@@ -203,7 +203,7 @@ app.get('/addcomment/:playername', async function(req, res) {
     }
   )
 
-  
+
 });
 
 // EDIT COMMENT PAGE
@@ -256,6 +256,7 @@ app.get('/userprofile', function(req, res){
 })
 
 
+
 //POST REQUESTS
 app.post('/login', function(req, res) {
   console.log("req session login" + req.session);
@@ -275,8 +276,8 @@ app.post('/login', function(req, res) {
           res.redirect("/mainpage")
         }
         else{
-          
-          
+
+
           requestModel.findOne({
             email: req.body.email
           }).then(
@@ -293,7 +294,7 @@ app.post('/login', function(req, res) {
           res.redirect("/mainpage")
 
         }
-        
+
 
 
 
@@ -455,8 +456,8 @@ app.post('/addcomment',async function(req,res){
           );
         }
       }
-    
-    
+
+
     )
 
     if(req.body.rating!=null){
@@ -471,7 +472,7 @@ app.post('/addcomment',async function(req,res){
             rating: req.body.rating
           }
         }
-  
+
       }
       );
     }
@@ -486,11 +487,11 @@ app.post('/addcomment',async function(req,res){
             playername: name,
           }
         }
-  
+
       }
       );
     }
-    
+
 
     res.redirect('playerprofile/:'+name)
   }
@@ -581,7 +582,7 @@ app.post('/deletecomment', async function(req,res){
               commenter: req.session.username
             }
           }
-      
+
         }
         );
       }
@@ -595,7 +596,7 @@ app.post('/deletecomment', async function(req,res){
               commenter: req.session.username
             }
           }
-      
+
         }
         );
       }
@@ -625,7 +626,7 @@ app.post('/mainpage', async function(req,res){
   console.log(req.body.name)
   playerModel.find({}, function (err,playerlist) { // tüm oyuncuları bulup listeyi aktarır
 
-    
+
 
     res.render('mainpage',{
       arr: playerlist,
@@ -653,12 +654,13 @@ app.post('/filterplayers', function(req,res){
 
 })
 
+
 app.post('/sortedplayers', async function(req,res){
 
   console.log(req.body.name)
   playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
 
-    
+
 
     var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
 
