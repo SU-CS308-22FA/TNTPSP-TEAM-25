@@ -283,7 +283,7 @@ app.post('/login', function(req, res) {
           }).then(
             (user)=>{
               if(user!=null){
-                res.render("mainpage", {verifMsg: "To be verified faster, please contact the admins."})
+                res.redirect("/mainpage"})
 
               }
             }
