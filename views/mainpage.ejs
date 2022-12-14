@@ -35,8 +35,6 @@
                 <input style="margin-left: 40%;margin-right: 40%;" type="submit" value="Sort Players">
             </form>
 
-
-
             </td>
         </tr>
     </table>
@@ -44,6 +42,7 @@
         <div style="width: 10%;border:5px solid red;padding-block: 10px;display: inline-block;vertical-align: top;">
           <a href="/mainpage"> <button style="width: 100%;height:30px">players</button></a>
             <a href="/rankings">  <button style="width: 100%;height: 30px;">rankings</button></a>
+
 
 
         </div >
@@ -66,14 +65,13 @@
                                     <button class="playerbutton">
                                         <img src="images/userimage.jpg"   width="200px" height="200px">
                                         <p style="font-size: 15px;" > <%= player.fullname%></p>
+
                                     </button>
                                 </a>
                             <% }%>
                         <% } %>
                     <% }%>
                 <%})%>
-
-
 
                 </tr>
 
@@ -84,5 +82,6 @@
     </div>
 
 </body>
+
 
 </html>

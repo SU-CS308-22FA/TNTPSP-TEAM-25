@@ -126,6 +126,7 @@ app.get('/playerprofile/:playername', function(req, res) {
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
         verifiedcomments : playerinfo[0].verifiedcomments,
+
         commenttype: "add",
         average: avg
       })
@@ -136,6 +137,7 @@ app.get('/playerprofile/:playername', function(req, res) {
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
         verifiedcomments : playerinfo[0].verifiedcomments,
+
         commenttype: "edit",
         average: avg
       })
@@ -202,7 +204,6 @@ app.get('/addcomment/:playername', async function(req, res) {
       }
     }
   )
-
 
 });
 
@@ -277,7 +278,6 @@ app.post('/login', function(req, res) {
         }
         else{
 
-
           requestModel.findOne({
             email: req.body.email
           }).then(
@@ -294,8 +294,6 @@ app.post('/login', function(req, res) {
           res.redirect("/mainpage")
 
         }
-
-
 
 
       }else{
@@ -457,7 +455,6 @@ app.post('/addcomment',async function(req,res){
         }
       }
 
-
     )
 
     if(req.body.rating!=null){
@@ -491,6 +488,7 @@ app.post('/addcomment',async function(req,res){
       }
       );
     }
+
 
 
     res.redirect('playerprofile/:'+name)
@@ -682,6 +680,7 @@ app.get('/rankings', function(req, res){
 
   })
 })
+
 
 app.post('/sortedplayers', async function(req,res){
 
