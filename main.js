@@ -697,12 +697,12 @@ app.post('/sortedplayers', async function(req,res){
 });
 
 })
-
-app.post('/verify', function(req, res) {
-  userModel.find({}, function (err, users) { // tüm oyuncuları bulup listeyi aktarır
-    console.log(users);
-  })
+app.get('/verify', function(req, res) {
+  res.render('verification')
 })
+
+
+
 
 app.post('/playerprofile/:playername', function(req, res) {
   //find the player by player name from the database
