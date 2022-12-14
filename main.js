@@ -677,6 +677,7 @@ app.get('/rankings', function(req, res){
           }
         }
         emptyArr.sort((a,b) => (a.avgRat < b.avgRat ? 1 : ((b.avgRat < a.avgRat) ? -1 : 0)))
+        res.render('rankings', {arr: emptyArr})
 
   })
 })
