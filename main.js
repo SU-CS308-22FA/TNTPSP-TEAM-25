@@ -702,7 +702,15 @@ app.get('/verify', function(req, res) {
 })
 
 
-
+app.post('/verify', function(req, res) {
+  userModel.findOneAndUpdate({email: req.body.email}, {isVerified: "yes"}, (err, userSample) => {
+    if(err){
+      res.send(err);
+    }else{
+      res.render("verification", {msg: "verified"})
+    }
+  })
+})
 
 app.post('/playerprofile/:playername', function(req, res) {
   //find the player by player name from the database
