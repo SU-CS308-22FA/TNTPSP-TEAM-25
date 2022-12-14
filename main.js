@@ -421,7 +421,7 @@ app.post('/addcomment',async function(req,res){
       username: req.session.username
     }).then(
       async (user)=>{
-        if(user.isVerified=="yes"){
+        if(user.isVerified=="yes" || (!"isVerified" in user)){
           await playerModel.findOneAndUpdate({
             fullname: name
           },
@@ -437,18 +437,7 @@ app.post('/addcomment',async function(req,res){
           );
         }
         else{
-          await playerModel.findOneAndUpdate({
-            fullname: name
-          },
-          {
-              $addToSet:{
-                comments: {
-                  comment: req.body.comment,
-                  commenter: req.session.username,
-                }
-              }
-          }
-          );
+          res.send("wait to be verified")
         }
       }
 
