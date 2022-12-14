@@ -283,7 +283,7 @@ app.post('/login', function(req, res) {
           }).then(
             (user)=>{
               if(user!=null){
-                res.redirect("/mainpage"})
+                res.redirect("/mainpage")
 
               }
             }
