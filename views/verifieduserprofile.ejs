@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="/Player.css" rel="stylesheet" type="text/css">
+    <meta charset="utf-8">
+
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Verified User Profile</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../stylesheets/style.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container" >
+        <div class="wrapper" style="text-align: center;">
+                <br></br>
+                <div>
+                    <img src="/images/userimage.jpg"  width="200px" height="200px">
+                    <p style="font-size: 30px;"> <%=username%>
+                    <img src="/images/verifiedicon.png"  width="30px" height="30px">
+                     </p>
+                    <button class="buttonred"> Follow User</button>
+                    <br></br>
+                    <br></br>
+
+                    <div>
+                        <h1> Comments </h1>
+                        <%if(locals.commentarray){%>
+                          <%commentarray.forEach(commentobj => {%>
+
+                              <div style="border-radius: 10px;border:5px solid red;width: 600px;height:100px;margin: auto;">
+                                  <p style="padding: 5px;font-size: 22px;">To <%=commentobj.playername%>:</p>
+                                  <p style="padding: 5px;font-size:16px;"><%=commentobj.comment%></p>
+
+                              </div>
+
+                          <%})%>
+                        <%}%>
+
+                    </div>
+                </div>
+            
+        </div>
+        <br></br>
+    </div>
+</body>
+</html>

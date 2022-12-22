@@ -70,8 +70,11 @@
                     <ol>
                         <%verifiedcomments.forEach(commentobj => {%>
                             <li style="padding: 10px;">
-                                <%=commentobj.commenter%>: &nbsp<%=commentobj.comment%>
-                                
+
+                                <a href="/verifieduserprofile/:<%=commentobj.commenter%>">
+                                    <b><%=commentobj.commenter%></b>
+                                </a>:
+                                &nbsp<%=commentobj.comment%>
                                 &nbsp&nbsp Rating: <%=commentobj.rating%>/10
 
                             </li>
