@@ -266,7 +266,19 @@ app.get('/userprofile', function(req, res){
   }
 })
 
+app.get('/verifieduserprofile/:username', function(req, res){
+  
+  var name = req.params['username'].substring(1)
 
+  userModel.find({username: name}, function (err, userinfo) {
+    res.render('verifieduserprofile',{
+      username: userinfo[0].username,
+      commentarray: userinfo[0].comments,
+
+    })
+  });
+  
+})
 
 //POST REQUESTS
 app.post('/login', function(req, res) {
