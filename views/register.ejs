@@ -41,7 +41,11 @@
                         <input style="width: 50%;" type="text" class="textinput" name="email" placeholder="Email Address" required="" autofocus="" />
                         <% if(locals.generatedPassword){%>
                         <input style="width: 50%;" type="password" value="<%=generatedPassword %>" class="textinput" name="password" placeholder="Password" required=""/>
+                        <%}else{%>
+                            <input style="width: 50%;" type="password" class="textinput" name="password" placeholder="Password" required=""/>
                         <%}%>
+                       
+
                     
                           
                          
