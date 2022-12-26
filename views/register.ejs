@@ -52,7 +52,7 @@
                         
                             
                               
-                        
+                        <% if(locals.generatedPassword){%>
                         <input
                             style="width: 50%; margin-left:25% ;"
                             type="password"
@@ -60,7 +60,19 @@
                             name="password2"
                             class="form-control"
                             placeholder="Confirm Pasword"
+                            value="<%=generatedPassword%>">
+                            <%}else{%>
+                                <input
+                            style="width: 50%; margin-left:25% ;"
+                            type="password"
+                            id="password2"
+                            name="password2"
+                            class="form-control"
+                            placeholder="Confirm Pasword"
                             value="<%= typeof email != 'undefined' ? password2 : '' %>">
+                            <%}%>
+
+
                         <% if(locals.errorMsg){%>
                             <p> <%=locals.errorMsg%> </p>
                         <%}%>
