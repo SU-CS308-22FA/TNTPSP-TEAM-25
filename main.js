@@ -22,7 +22,7 @@ const userSchema = new Schema({
   email: String,
   isVerified: String,
   comments : { type : Array , "default" : [] },
-
+  imagelink: String
 });
 
 const userModel = mongoose.model("userModel", userSchema);
@@ -147,14 +147,26 @@ app.get('/playerprofile/:playername', function(req, res) {
 
 app.get('/mainpage', function(req, res) {
 
-  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+  var imageurl;
+  userModel.find({
+    username:req.session.username
+  },
+  function(err,user){
+    imageurl = user[0].imagelink
+    console.log(imageurl)
+    playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
 
-      res.render('mainpage',{
-        arr:playerlist,
-        searchtext: "",
-        position:""
-      })
-  });
+        res.render('mainpage',{
+          arr:playerlist,
+          searchtext: "",
+          position:"",
+          link: imageurl
+        })
+    });
+  }
+  )
+
+  
 });
 app.post('/report', async function(req,res){
 
@@ -173,7 +185,7 @@ app.post('/report', async function(req,res){
       email: req.session.email,
       password: req.session.password,
       commentarray: userinfo[0].comments,
-
+      userimage: userinfo[0].imagelink
     })
   });
 
@@ -258,7 +270,7 @@ app.get('/userprofile', function(req, res){
         email: req.session.email,
         password: req.session.password,
         commentarray: userinfo[0].comments,
-
+        userimage: userinfo[0].imagelink
       })
     });
   }else{
@@ -322,6 +334,7 @@ app.post('/register', function(req, res) {
     password : req.body.password,
     password2 : req.body.password2,
     email: req.body.email,
+    imagelink: "/images/userimage.jpg"
   });
   if (req.body.password!=req.body.password2) // bakılacak
   {
@@ -348,6 +361,7 @@ app.post('/register', function(req, res) {
         password2 : req.body.password2,
         email: req.body.email,
         isVerified: "no",
+        imagelink: "/images/userimage.jpg"
       });
       userInstanceNew.save((err) => {
         if (err) {
@@ -631,18 +645,25 @@ app.post('/deletecomment', async function(req,res){
 
 app.post('/mainpage', async function(req,res){
 
-  console.log(req.body.name)
-  playerModel.find({}, function (err,playerlist) { // tüm oyuncuları bulup listeyi aktarır
+  var imageurl;
+  userModel.find({
+    username:req.session.username
+  },
+  function(err,user){
+    imageurl = user[0].imagelink
+    console.log(req.body.name)
+    playerModel.find({}, function (err,playerlist) { // tüm oyuncuları bulup listeyi aktarır
+      res.render('mainpage',{
+        arr: playerlist,
+        searchtext: req.body.name,
+        position:"",
+        link: imageurl
+      })
+    });
+  }
+  )
 
-
-
-    res.render('mainpage',{
-      arr: playerlist,
-      searchtext: req.body.name,
-      position:""
-
-    })
-});
+  
 
 })
 app.post('/filterplayers', function(req,res){
@@ -650,17 +671,24 @@ app.post('/filterplayers', function(req,res){
   //var filterstring = req.body.playerpos
   //var query = {position: filterstring}
   console.log(req.body.position)
-
-
-  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
-    res.render('mainpage',{
-      arr:playerlist,
-      searchtext: "",
-      position: req.body.position
-    })
-});
-
+  var imageurl;
+  userModel.find({
+    username:req.session.username
+  },
+  function(err,user){
+    imageurl = user[0].imagelink
+    playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+      res.render('mainpage',{
+        arr:playerlist,
+        searchtext: "",
+        position: req.body.position,
+        link:imageurl
+      })
+  });
+  }
+  )
 })
+
 app.get('/rankings', function(req, res){
   playerModel.find({}, function (err, playerinfo) {
         emptyArr = []
@@ -693,21 +721,28 @@ app.get('/rankings', function(req, res){
 
 
 app.post('/sortedplayers', async function(req,res){
+  var imageurl;
+  userModel.find({
+    username:req.session.username
+  },
+  function(err,user){
+      imageurl = user[0].imagelink
+      playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
 
-  console.log(req.body.name)
-  playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
-
-    var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
-
-    console.log(sortedPlayers)
-
-    res.render('mainpage',{
-      arr:sortedPlayers,
-      searchtext: "",
-      position:""
-
-    })
-});
+        var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
+    
+        console.log(sortedPlayers)
+    
+        res.render('mainpage',{
+          arr:sortedPlayers,
+          searchtext: "",
+          position:"",
+          link:imageurl
+        })
+    });
+  }
+  )
+  
 
 })
 app.get('/verify', function(req, res) {
@@ -781,5 +816,29 @@ app.post('/playerprofile/:playername', function(req, res) {
   });
 });
 
+app.post('/enterlink',async function(req,res){ //
+
+  console.log(req.body.link)
+  await userModel.updateOne({
+    username: req.session.username,
+  },
+  {
+    $set:{
+      imagelink: req.body.link,
+    }
+  },
+  );
+       
+  userModel.find({username: req.session.username}, function (err, userinfo) {
+    res.render('userprofile',{
+      username: req.session.username,
+      email: req.session.email,
+      password: req.session.password,
+      commentarray: userinfo[0].comments,
+      userimage: userinfo[0].imagelink
+    })
+  });
+
+})
 
 app.listen(process.env.PORT || 3001);

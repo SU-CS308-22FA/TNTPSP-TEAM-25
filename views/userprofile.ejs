@@ -12,6 +12,19 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="../stylesheets/style.css">
 
+    <script>
+        function showform() {
+            var x = document.getElementById("textboxContainer");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+    
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
@@ -23,10 +36,24 @@
 
     <div class="container">
         <div class="wrapper">
-            <form action="/updateuser" method="post" name="Login_Form" class="form-signin">
                 <br></br>
                 <div>
-                    <div style="display: inline-block;margin-right: 20%;margin-left: 0%;width: 10%;">
+                    <div style="display: inline-block;margin-right: 20%;margin-left: 0%;width: 15%;">
+
+                        <%if(locals.userimage){%>
+                            <img src=<%=userimage%> style="border:5px solid red" onerror="this.onerror=null; this.src='/images/userimage.jpg'" width="150px" height="150px">
+                        <%} else {%>
+                            <img src="/images/userimage.jpg"  width="150px" height="150px">
+                        <%}%>
+                        <button onclick="showform()" style="margin-left: 20px;">Upload Image</button>
+                        
+                        <form action="/enterlink" method="post" id="textboxContainer" style="display: none;">
+                            <input type="text" class="form-control" name="link" placeholder="Enter link" />
+                            <button style="background-color:red;margin-left: 25%;color: white;"type="submit">Submit</button>    
+                        </form>
+                        
+
+                        <br></br>
                         <label for="userp">Username:  </label> <p name='userp'><%=username%></p>
                         <label for="emailp">Email:</label><p name='emailp'><%=email%></p>
                         <label for="passwordp">Password:</label><p name='passwordp'><%=password%></p>
@@ -55,6 +82,8 @@
 
                 <br></br>
                 <br></br>
+            <form action="/updateuser" method="post" name="Login_Form" class="form-signin">
+
                 <h3 style="text-align: center;">Update Profile</h3>
 
                 <label style="margin-top:10px;"  for="userp">Username:  </label>
