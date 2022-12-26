@@ -8,7 +8,15 @@
         <tr>
             <td style="width: 10%;">
                 <a href="/userprofile">
-                    <button><img src="images/userimage.jpg"  width="100px" height="100px"></button>
+                    <%if(locals.link){%>
+                        <button>
+                        <img src=<%=link%>  onerror="this.onerror=null; this.src='/images/userimage.jpg'" width="100px" height="100px">
+                        </button>
+                    <%} else {%>
+                        <button>
+                        <img src="/images/userimage.jpg"  width="100px" height="100px">
+                        </button>
+                    <%}%>
                 </a>
                 <%if(locals.verifMsg){%>
                 <p><%=verifMsg%></p>
