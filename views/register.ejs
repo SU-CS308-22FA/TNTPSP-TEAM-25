@@ -39,9 +39,22 @@
                         <h3 class="form-signin-heading"><b>Sign Up </b> </h3>
                         <input style="width: 50%;" type="text" class="textinput" name="username" placeholder="Username" required="" autofocus="" />
                         <input style="width: 50%;" type="text" class="textinput" name="email" placeholder="Email Address" required="" autofocus="" />
-                        <input style="width: 50%;" type="password" class="textinput" name="password" placeholder="Password" required=""/>
+                        <% if(locals.generatedPassword){%>
+                        <input style="width: 50%;" type="password" value="<%=generatedPassword %>" class="textinput" name="password" placeholder="Password" required=""/>
+                        <%}else{%>
+                            <input style="width: 50%;" type="password" class="textinput" name="password" placeholder="Password" required=""/>
+                        <%}%>
+                       
+
+                    
+                          
+                         
+                        
+                            
+                              
+                        
                         <input
-                            style="width: 50%;margin-left:25% ;"
+                            style="width: 50%; margin-left:25% ;"
                             type="password"
                             id="password2"
                             name="password2"
@@ -58,6 +71,10 @@
                         <button class="buttonred" name="Submit" value="Login" type="Submit">Register</button>
                     </form>
                 </form>
+                <form action="/generatePassword" method="post">
+                    <input style="margin-left: 40%;margin-right: 40%;" type="submit" value="Generate Password">
+                 </form>
+                  
                     
                     
                     
