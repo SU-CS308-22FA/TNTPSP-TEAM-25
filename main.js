@@ -4,7 +4,6 @@ const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 
 const mongoose = require("mongoose");
-const { query } = require('express');
 
 const mongoDB = "mongodb+srv://deneme:deneme@cluster0.b2biihn.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -21,8 +20,8 @@ const userSchema = new Schema({
   password2: String,
   email: String,
   isVerified: String,
-  comments : { type : Array , "default" : [] },
-  imagelink: String
+  
+  comments : { type : Array , "default" : [] }
 });
 
 const userModel = mongoose.model("userModel", userSchema);
@@ -34,12 +33,10 @@ const playerSchema = new Schema({
   age: Number,
   comments : { type : Array , "default" : [] },
   verifiedcomments : { type : Array , "default" : [] },
-  pid: Number,
-  position:String
+  pid: Number
 });
 
 const playerModel = mongoose.model("player", playerSchema);
-
 const requestSchema = new Schema({
   username: String,
   email: String,
@@ -47,12 +44,7 @@ const requestSchema = new Schema({
 
 const requestModel = mongoose.model("verifiedrequests", requestSchema);
 
-const reportSchema = new Schema({
-  username: String,
-  reportmessage: String,
-})
 
-const reportModel = mongoose.model("bugreports", reportSchema);
 
 app.set('view engine', 'ejs');
 app.use(express.json());       // to support JSON-encoded bodies
@@ -95,40 +87,21 @@ app.get('/playerprofile', function(req, res){
 })
 app.get('/playerprofile/:playername', function(req, res) {
   //find the player by player name from the database
+  console.log(req.params['playername'])
   var name = req.params['playername'].substring(1)
 
   var query = {fullname: name}
 
   playerModel.find(query, function (err, playerinfo) {
     var result = playerinfo[0].comments.findIndex(({ commenter }) => commenter === req.session.username)
-    var result2 = playerinfo[0].verifiedcomments.findIndex(({ commenter }) => commenter === req.session.username)
+    console.log(result)
 
-
-    var size = playerinfo[0].verifiedcomments.length
-    var sum =0;
-    var avg;
-
-    for(let i=0;i<size;i++){
-      sum+= Number(playerinfo[0].verifiedcomments[i]['rating'])
-    }
-
-    if(size!=0){
-      avg = (sum/size).toFixed(1)
-    }
-    else{
-      avg = -1
-    }
-
-
-    if(result==-1 && result2==-1){                 // daha önce yorumu yoksa
+    if(result==-1){                 // daha önce yorumu yoksa
       res.render('playerprofile',{
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
-        verifiedcomments : playerinfo[0].verifiedcomments,
-
-        commenttype: "add",
-        average: avg
+        commenttype: "add"
       })
     }
     else{                           // daha önce yorumu varsa
@@ -136,10 +109,7 @@ app.get('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : playerinfo[0].comments,
-        verifiedcomments : playerinfo[0].verifiedcomments,
-
-        commenttype: "edit",
-        average: avg
+        commenttype: "edit"
       })
     }
   });
@@ -147,49 +117,14 @@ app.get('/playerprofile/:playername', function(req, res) {
 
 app.get('/mainpage', function(req, res) {
 
-  var imageurl;
-  userModel.find({
-    username:req.session.username
-  },
-  function(err,user){
-    imageurl = user[0].imagelink
-    console.log(imageurl)
-    playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
 
-        res.render('mainpage',{
-          arr:playerlist,
-          searchtext: "",
-          position:"",
-          link: imageurl
-        })
-    });
-  }
-  )
-
-  
+      res.render('mainpage',{
+        arr:playerlist,
+        searchtext: ""
+      })
+  });
 });
-app.post('/report', async function(req,res){
-
-  //var filterstring = req.body.playerpos
-  //var query = {position: filterstring}
-
-  var myobj = { username: req.session.username, reportmessage:req.body.reportmsg};
-  await reportModel.insertMany(myobj, function(err, res) {
-    if (err) throw err;
-    console.log("1 document inserted");
-  });
-
-  userModel.find({username: req.session.username}, function (err, userinfo) {
-    res.render('userprofile',{
-      username: req.session.username,
-      email: req.session.email,
-      password: req.session.password,
-      commentarray: userinfo[0].comments,
-      userimage: userinfo[0].imagelink
-    })
-  });
-
-})
 
 // ADD COMMENT PAGE
 app.get('/addcomment', function(req, res) {
@@ -199,31 +134,16 @@ app.get('/addcomment', function(req, res) {
   res.render('addcomment');
 });
 
-app.get('/addcomment/:playername', async function(req, res) {
-  if(!req.session.username){
-    res.redirect('/login')
-  }else{
-    var name = req.params['playername'].substring(1)
+app.get('/addcomment/:playername', function(req, res) {
+  var name = req.params['playername'].substring(1)
 
-    await userModel.findOne({
-      username: req.session.username
-    }).then(
-      (user)=>{
-        if(user.isVerified=="yes"){
-          res.render('addcomment',{pName: name,showrating:"yes"});
-
-        }
-        else{
-          res.render('addcomment',{pName: name,showrating:"no"});
-
-        }
-      }
-    )
+  if(req.session){
+    console.log(req.session);
   }
-
+  res.render('addcomment',{
+    pName: name
+  });
 });
-
-
 
 // EDIT COMMENT PAGE
 app.get('/editcomment', function(req, res) {
@@ -232,31 +152,15 @@ app.get('/editcomment', function(req, res) {
   }
   res.render('editcomment');
 });
-app.get('/editcomment/:playername',async function(req, res) {
-  if(!req.session.username){
-    res.redirect('/login')
-  }else{
-    var name = req.params['playername'].substring(1)
+app.get('/editcomment/:playername', function(req, res) {
+  var name = req.params['playername'].substring(1)
 
-    await userModel.findOne({
-      username: req.session.username
-    }).then(
-      (user)=>{
-        var index = user.comments.findIndex(({ playername }) => playername === name)
-        var usercomment = user.comments[index]['comment']
-        var userrating = user.comments[index]['rating']
-
-        if(user.isVerified=="yes"){
-          res.render('editcomment',{pName: name,showrating:"yes",currentcomment:usercomment,currentrating:userrating});
-
-        }
-        else{
-          res.render('editcomment',{pName: name,showrating:"no",currentcomment:usercomment});
-
-        }
-      }
-    )
+  if(req.session){
+    console.log(req.session);
   }
+  res.render('editcomment',{
+    pName: name
+  });
 });
 
 app.get('/userprofile', function(req, res){
@@ -270,7 +174,7 @@ app.get('/userprofile', function(req, res){
         email: req.session.email,
         password: req.session.password,
         commentarray: userinfo[0].comments,
-        userimage: userinfo[0].imagelink
+
       })
     });
   }else{
@@ -278,19 +182,6 @@ app.get('/userprofile', function(req, res){
   }
 })
 
-app.get('/verifieduserprofile/:username', function(req, res){
-  
-  var name = req.params['username'].substring(1)
-
-  userModel.find({username: name}, function (err, userinfo) {
-    res.render('verifieduserprofile',{
-      username: userinfo[0].username,
-      commentarray: userinfo[0].comments,
-
-    })
-  });
-  
-})
 
 //POST REQUESTS
 app.post('/login', function(req, res) {
@@ -306,10 +197,7 @@ app.post('/login', function(req, res) {
         req.session.email = req.body.email
         req.session.password = req.body.password
         req.session.username = user.username
-
         res.redirect("/mainpage")
-
-
 
       }else{
         res.send("Wrong Password");
@@ -323,7 +211,15 @@ app.post('/login', function(req, res) {
 
 
 });
+var generator = require('generate-password');
 
+var password = generator.generate({
+	length: 10,
+	numbers: true
+});
+
+
+console.log(password);
 
 app.post('/register', function(req, res) {
   console.log(req.body);
@@ -333,58 +229,23 @@ app.post('/register', function(req, res) {
     username: req.body.username,
     password : req.body.password,
     password2 : req.body.password2,
-    email: req.body.email,
-    imagelink: "/images/userimage.jpg"
+    isVerified: "no",
+    email: req.body.email
   });
   if (req.body.password!=req.body.password2) // bakılacak
   {
     res.render("register", {errorMsg: "Password's do not match"})
   }
   else{
-    if(req.body.verified=="yes"){
-      const requestInstance = new requestModel(
-        {
-          username: req.body.username,
-          email: req.body.email,
-        });
+    userInstance.save((err) => {
+      if (err) {
+        console.log(err);
+        res.send("error")
+      }else{
+        res.redirect('/login')
 
-        requestInstance.save((err) => {
-        if (err) {
-          console.log(err);
-          res.send("error")
-        }
-      });
-      const userInstanceNew = new userModel(
-      {
-        username: req.body.username,
-        password : req.body.password,
-        password2 : req.body.password2,
-        email: req.body.email,
-        isVerified: "no",
-        imagelink: "/images/userimage.jpg"
-      });
-      userInstanceNew.save((err) => {
-        if (err) {
-          console.log(err);
-          res.send("error")
-        }else{
-          res.redirect('/login')
-
-        }
-      });
-    }else{
-      userInstance.save((err) => {
-        if (err) {
-          console.log(err);
-          res.send("error")
-        }else{
-          res.redirect('/login')
-
-        }
-      });
-    }
-
-
+      }
+    });
   }
 
 });
@@ -454,66 +315,32 @@ app.post('/addcomment',async function(req,res){
     res.send('comment is too long')
   }
   else{
+    await playerModel.findOneAndUpdate({
+      fullname: name
+    },
+    {
+      $addToSet:{
+        comments: {
+          comment: req.body.comment,
+          commenter: req.session.username
+        }
+      }
 
-    await userModel.findOne({
+    }
+    );
+    await userModel.findOneAndUpdate({
       username: req.session.username
-    }).then(
-      async (user)=>{
-        if(user.isVerified=="yes" || (!"isVerified" in user)){
-          await playerModel.findOneAndUpdate({
-            fullname: name
-          },
-          {
-              $addToSet:{
-                verifiedcomments: {
-                  comment: req.body.comment,
-                  commenter: req.session.username,
-                  rating: req.body.rating
-                }
-              },
-          }
-          );
-        }
-        else{
-          res.send("wait to be verified")
+    },
+    {
+      $addToSet:{
+        comments: {
+          comment: req.body.comment,
+          playername: name
         }
       }
 
-    )
-
-    if(req.body.rating!=null){
-      await userModel.findOneAndUpdate({
-        username: req.session.username
-      },
-      {
-        $addToSet:{
-          comments: {
-            comment: req.body.comment,
-            playername: name,
-            rating: req.body.rating
-          }
-        }
-
-      }
-      );
     }
-    else{
-      await userModel.findOneAndUpdate({
-        username: req.session.username
-      },
-      {
-        $addToSet:{
-          comments: {
-            comment: req.body.comment,
-            playername: name,
-          }
-        }
-
-      }
-      );
-    }
-
-
+    );
 
     res.redirect('playerprofile/:'+name)
   }
@@ -532,50 +359,23 @@ app.post('/edit',async function(req,res){ //
     res.send('comment is too long')
   }
   else{
-
-    await userModel.findOne({
-      username: req.session.username
-    }).then(
-      async (user)=>{
-        if(user.isVerified=="yes"){
-          await playerModel.updateOne({
-            fullname: name,
-            "verifiedcomments.commenter":userName
-          },
-          {
-            $set:{
-              "verifiedcomments.$.comment": req.body.comment,
-              "verifiedcomments.$.rating": req.body.rating
-            }
-          },
-          );
-        }
-        else{
-          await playerModel.updateOne({
-            fullname: name,
-            "comments.commenter":userName
-          },
-          {
-            $set:{
-              "comments.$.comment": req.body.comment
-            }
-          },
-          );
-        }
+    await playerModel.updateOne({
+      fullname: name,
+      "comments.commenter":userName
+    },
+    {
+      $set:{
+        "comments.$.comment": req.body.comment
       }
-
-    )
-
-
+    },
+    );
     await userModel.updateOne({
       username: req.session.username,
       "comments.playername": name
     },
     {
       $set:{
-        "comments.$.comment": req.body.comment,
-        "comments.$.rating": req.body.rating,
-
+        "comments.$.comment": req.body.comment
       }
 
     },
@@ -589,42 +389,18 @@ app.post('/edit',async function(req,res){ //
 
 app.post('/deletecomment', async function(req,res){
   var name = req.body.pName
-
-  await userModel.findOne({
-    username: req.session.username
-  }).then(
-    async (user)=>{
-      if(user.isVerified=="yes"){
-        await playerModel.updateOne({
-          fullname: name
-        },
-        {
-          $pull:{
-            verifiedcomments: {
-              commenter: req.session.username
-            }
-          }
-
-        }
-        );
-      }
-      else{
-        await playerModel.updateOne({
-          fullname: name
-        },
-        {
-          $pull:{
-            comments: {
-              commenter: req.session.username
-            }
-          }
-
-        }
-        );
+  await playerModel.updateOne({
+    fullname: name
+  },
+  {
+    $pull:{
+      comments: {
+        commenter: req.session.username
       }
     }
 
-  )
+  }
+  );
   await userModel.updateOne({
     username: req.session.username
   },
@@ -645,122 +421,15 @@ app.post('/deletecomment', async function(req,res){
 
 app.post('/mainpage', async function(req,res){
 
-  var imageurl;
-  userModel.find({
-    username:req.session.username
-  },
-  function(err,user){
-    imageurl = user[0].imagelink
-    console.log(req.body.name)
-    playerModel.find({}, function (err,playerlist) { // tüm oyuncuları bulup listeyi aktarır
-      res.render('mainpage',{
-        arr: playerlist,
-        searchtext: req.body.name,
-        position:"",
-        link: imageurl
-      })
-    });
-  }
-  )
+  console.log(req.body.name)
+  playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+    res.render('mainpage',{
+      arr:playerlist,
+      searchtext: req.body.name
 
-  
+    })
+});
 
-})
-app.post('/filterplayers', function(req,res){
-
-  //var filterstring = req.body.playerpos
-  //var query = {position: filterstring}
-  console.log(req.body.position)
-  var imageurl;
-  userModel.find({
-    username:req.session.username
-  },
-  function(err,user){
-    imageurl = user[0].imagelink
-    playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
-      res.render('mainpage',{
-        arr:playerlist,
-        searchtext: "",
-        position: req.body.position,
-        link:imageurl
-      })
-  });
-  }
-  )
-})
-
-app.get('/rankings', function(req, res){
-  playerModel.find({}, function (err, playerinfo) {
-        emptyArr = []
-
-        for (player in playerinfo) {
-        // code block to be executed
-          totalRat = 0
-          totalComments = playerinfo[player].verifiedcomments.length
-          for (k in playerinfo[player].verifiedcomments){
-              totalRat += parseFloat(playerinfo[player].verifiedcomments[k].rating)
-          }
-          obj = {
-            'fullname' : playerinfo[player].fullname,
-            'avgRat' : (totalRat/totalComments).toFixed(2),
-            'ratingsgained' : totalRat,
-            'totalRatings' : totalComments
-          }
-          emptyArr.push(obj)
-        }
-        for(l in emptyArr){
-          if( isNaN(emptyArr[l].avgRat) ){
-            emptyArr[l].avgRat = 0
-          }
-        }
-        emptyArr.sort((a,b) => (a.avgRat < b.avgRat ? 1 : ((b.avgRat < a.avgRat) ? -1 : 0)))
-        res.render('rankings', {arr: emptyArr})
-
-  })
-})
-
-
-app.post('/sortedplayers', async function(req,res){
-  var imageurl;
-  userModel.find({
-    username:req.session.username
-  },
-  function(err,user){
-      imageurl = user[0].imagelink
-      playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
-
-        var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
-    
-        console.log(sortedPlayers)
-    
-        res.render('mainpage',{
-          arr:sortedPlayers,
-          searchtext: "",
-          position:"",
-          link:imageurl
-        })
-    });
-  }
-  )
-  
-
-})
-app.get('/verify', function(req, res) {
-  userModel.find({isVerified: "no"}, function (err, users) {
-    res.render('verification', {users:users})
-  })
-
-})
-
-
-app.post('/verify', function(req, res) {
-  userModel.findOneAndUpdate({email: req.body.email}, {isVerified: "yes"}, (err, userSample) => {
-    if(err){
-      res.send(err);
-    }else{
-      res.redirect("/verify")
-    }
-  })
 })
 
 app.post('/playerprofile/:playername', function(req, res) {
@@ -778,29 +447,12 @@ app.post('/playerprofile/:playername', function(req, res) {
 
     console.log(sortedComments[0])
 
-    var size = playerinfo[0].verifiedcomments.length
-    var sum =0;
-    var avg;
-
-    for(let i=0;i<size;i++){
-      sum+= Number(playerinfo[0].verifiedcomments[i]['rating'])
-    }
-
-    if(size!=0){
-      avg = (sum/size).toFixed(1)
-    }
-    else{
-      avg = -1
-    }
-
     if(result==-1){                 // daha önce yorumu yoksa
       res.render('playerprofile',{
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : sortedComments,
-        verifiedcomments : playerinfo[0].verifiedcomments,
-        commenttype: "add",
-        average: avg
+        commenttype: "add"
       })
     }
     else{                           // daha önce yorumu varsa
@@ -808,37 +460,34 @@ app.post('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : sortedComments,
-        verifiedcomments : playerinfo[0].verifiedcomments,
-        commenttype: "edit",
-        average: avg
+        commenttype: "edit"
       })
     }
   });
 });
 
-app.post('/enterlink',async function(req,res){ //
+app.post('/generatePassword', async function(req,res){
+ 
+  var length = 12,
+      charset = 
+"@#$&*0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$&*0123456789abcdefghijklmnopqrstuvwxyz";
+      var generatedPassword = "";
+  for (var i = 0, n = charset.length; i < length; ++i) {
+      generatedPassword += charset.charAt(Math.floor(Math.random() * n));
+  }
+  console.log(generatedPassword)
+  
+  res.render('register',{
+    generatedPassword: generatedPassword
+    
 
-  console.log(req.body.link)
-  await userModel.updateOne({
-    username: req.session.username,
-  },
-  {
-    $set:{
-      imagelink: req.body.link,
-    }
-  },
-  );
-       
-  userModel.find({username: req.session.username}, function (err, userinfo) {
-    res.render('userprofile',{
-      username: req.session.username,
-      email: req.session.email,
-      password: req.session.password,
-      commentarray: userinfo[0].comments,
-      userimage: userinfo[0].imagelink
-    })
-  });
+  })
+  
+}
+);
 
-})
+
+
+
 
 app.listen(process.env.PORT || 3001);
