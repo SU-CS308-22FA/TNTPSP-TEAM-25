@@ -840,5 +840,25 @@ app.post('/enterlink',async function(req,res){ //
   });
 
 })
+app.post('/generatePassword', async function(req,res){
+ 
+  var length = 12,
+      charset = 
+"@#$&*0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$&*0123456789abcdefghijklmnopqrstuvwxyz";
+      var generatedPassword = "";
+  for (var i = 0, n = charset.length; i < length; ++i) {
+      generatedPassword += charset.charAt(Math.floor(Math.random() * n));
+  }
+  console.log(generatedPassword)
+  
+  res.render('register',{
+    generatedPassword: generatedPassword
+    
+
+  })
+  
+}
+);
+
 
 app.listen(process.env.PORT || 3001);
