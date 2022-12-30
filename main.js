@@ -22,6 +22,7 @@ const userSchema = new Schema({
   email: String,
   isVerified: String,
   comments : { type : Array , "default" : [] },
+  followings : { type : Array , "default" : [] },
   imagelink: String
 });
 
@@ -859,6 +860,26 @@ app.post('/generatePassword', async function(req,res){
   
 }
 );
+
+app.post('/followUser', async function(req,res){
+  await userModel.findOneAndUpdate({
+    username: req.session.username
+  },
+  {
+    $addToSet:{
+      followings: {
+        name: req.body.name,
+        
+      }
+    }
+
+  }
+
+  );
+  res.redirect("/verifieduserprofile/:"+req.body.name)
+
+
+});
 
 
 app.listen(process.env.PORT || 3001);

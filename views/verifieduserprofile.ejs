@@ -24,7 +24,8 @@
                     <p style="font-size: 30px;"> <%=username%>
                     <img src="/images/verifiedicon.png"  width="30px" height="30px">
                      </p>
-                    <button class="buttonred"> Follow User</button>
+                     <form action="/followUser" method="post"> 
+                    <button class="buttonred" type="submit" value="<%=username%>" name="name"> Follow User</button> </form>
                     <br></br>
                     <br></br>
 
