@@ -24,8 +24,13 @@
                     <p style="font-size: 30px;"> <%=username%>
                     <img src="/images/verifiedicon.png"  width="30px" height="30px">
                      </p>
+                     <%if(isfollowed==-1){%>
                      <form action="/followUser" method="post"> 
                     <button class="buttonred" type="submit" value="<%=username%>" name="name"> Follow User</button> </form>
+                    <%}else{%>
+                    <form action="/deletefollowing" method="post"> 
+                        <button class="buttonblue" type="submit" value="<%=username%>" name="name"> Followed</button> </form>
+                    <%}%>
                     <br></br>
                     <br></br>
 
