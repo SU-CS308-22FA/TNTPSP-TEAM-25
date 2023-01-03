@@ -167,7 +167,7 @@ app.get('/mainpage', function(req, res) {
   }
   )
 
-  
+
 });
 app.post('/report', async function(req,res){
 
@@ -280,7 +280,7 @@ app.get('/userprofile', function(req, res){
 })
 
 app.get('/verifieduserprofile/:username', function(req, res){
-  
+
   var name = req.params['username'].substring(1)
 
   userModel.find({username: name}, function (err, userinfo) {
@@ -290,7 +290,7 @@ app.get('/verifieduserprofile/:username', function(req, res){
 
     })
   });
-  
+
 })
 
 //POST REQUESTS
@@ -460,7 +460,7 @@ app.post('/addcomment',async function(req,res){
       username: req.session.username
     }).then(
       async (user)=>{
-        if(user.isVerified=="yes" || (!"isVerified" in user)){
+        if(user.isVerified=="yes"){
           await playerModel.findOneAndUpdate({
             fullname: name
           },
@@ -474,9 +474,23 @@ app.post('/addcomment',async function(req,res){
               },
           }
           );
-        }
-        else{
+        }else if(!user.isVerified){
+            await playerModel.findOneAndUpdate({
+              fullname: name
+            },
+            {
+                $addToSet:{
+                  comments: {
+                    comment: req.body.comment,
+                    commenter: req.session.username,
+                    rating: req.body.rating
+                  }
+                },
+            }
+            );
+        }else{
           res.send("wait to be verified")
+          return
         }
       }
 
@@ -664,7 +678,7 @@ app.post('/mainpage', async function(req,res){
   }
   )
 
-  
+
 
 })
 app.post('/filterplayers', function(req,res){
@@ -731,9 +745,9 @@ app.post('/sortedplayers', async function(req,res){
       playerModel.find({}, function (err, playerinfo) { // tüm oyuncuları bulup listeyi aktarır
 
         var sortedPlayers = playerinfo.sort((a,b) => (a.fullname > b.fullname ? 1 : ((b.fullname > a.fullname) ? -1 : 0)))
-    
+
         console.log(sortedPlayers)
-    
+
         res.render('mainpage',{
           arr:sortedPlayers,
           searchtext: "",
@@ -743,7 +757,7 @@ app.post('/sortedplayers', async function(req,res){
     });
   }
   )
-  
+
 
 })
 app.get('/verify', function(req, res) {
@@ -764,17 +778,34 @@ app.post('/verify', function(req, res) {
   })
 })
 
-app.post('/playerprofile/:playername', function(req, res) {
+app.post('/playerprofile/:playername', async function(req, res) {
   //find the player by player name from the database
-  console.log("aaaaa")
-  var name = req.params['playername'].substring(1)
+  //console.log(req.params)
+  //console.log(req.session);
+  console.log(req.session);
 
+
+  if(!req.session.username){
+    res.redirect('/')
+    return
+  }
+
+  var name = req.params['playername'].substring(1)
   var query = {fullname: name}
+
+  var theFollowed;
+
+  await userModel.findOne({
+    username: req.session.username
+  }).then(
+    (user)=>{
+    console.log("userinfo" + user)
+    theFollowed = user.followings
+  });
 
   playerModel.find(query, function (err, playerinfo) {
     var result = playerinfo[0].comments.findIndex(({ commenter }) => commenter === req.session.username)
     console.log(result)
-
     var sortedComments = playerinfo[0].comments.sort((a,b) => (a.commenter > b.commenter) ? 1 : ((b.commenter > a.commenter) ? -1 : 0))
 
     console.log(sortedComments[0])
@@ -782,24 +813,31 @@ app.post('/playerprofile/:playername', function(req, res) {
     var size = playerinfo[0].verifiedcomments.length
     var sum =0;
     var avg;
+    var theFollowedComments = [];
 
     for(let i=0;i<size;i++){
       sum+= Number(playerinfo[0].verifiedcomments[i]['rating'])
     }
-
+    for(let z=0;z<size;z++){
+      theFollowed.forEach((item, index, object) => {
+        if(playerinfo[0].verifiedcomments[z]['commenter'] == item["name"]){
+          theFollowedComments.push(playerinfo[0].verifiedcomments[z])
+        }
+      });
+    }
     if(size!=0){
       avg = (sum/size).toFixed(1)
     }
     else{
       avg = -1
     }
-
+    console.log("playerinfo[0].verifiedcomments " + playerinfo[0].verifiedcomments[0]);
     if(result==-1){                 // daha önce yorumu yoksa
       res.render('playerprofile',{
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : sortedComments,
-        verifiedcomments : playerinfo[0].verifiedcomments,
+        verifiedcomments : theFollowedComments,
         commenttype: "add",
         average: avg
       })
@@ -809,7 +847,7 @@ app.post('/playerprofile/:playername', function(req, res) {
         pName: playerinfo[0].fullname,
         pAge: playerinfo[0].age,
         standardcomments : sortedComments,
-        verifiedcomments : playerinfo[0].verifiedcomments,
+        verifiedcomments : theFollowedComments,
         commenttype: "edit",
         average: avg
       })
@@ -829,7 +867,7 @@ app.post('/enterlink',async function(req,res){ //
     }
   },
   );
-       
+
   userModel.find({username: req.session.username}, function (err, userinfo) {
     res.render('userprofile',{
       username: req.session.username,
@@ -842,22 +880,22 @@ app.post('/enterlink',async function(req,res){ //
 
 })
 app.post('/generatePassword', async function(req,res){
- 
+
   var length = 12,
-      charset = 
+      charset =
 "@#$&*0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$&*0123456789abcdefghijklmnopqrstuvwxyz";
       var generatedPassword = "";
   for (var i = 0, n = charset.length; i < length; ++i) {
       generatedPassword += charset.charAt(Math.floor(Math.random() * n));
   }
   console.log(generatedPassword)
-  
+
   res.render('register',{
     generatedPassword: generatedPassword
-    
+
 
   })
-  
+
 }
 );
 
@@ -869,7 +907,7 @@ app.post('/followUser', async function(req,res){
     $addToSet:{
       followings: {
         name: req.body.name,
-        
+
       }
     }
 
