@@ -49,6 +49,17 @@
 
         </div >
         <div style="width: 88%;border:5px solid red;padding-block: 10px; display: inline-block;">
+            
+            <form action="/positionrankings" method="post">
+                <input type="submit" name ="position" value="GK">
+                <input type="submit" name ="position" value="DF">
+                <input type="submit" name ="position" value="MF">
+                <input type="submit" name ="position" value="ST">
+ 
+            </form>
+
+
+            
             <table id="customers">
                 <tr>
                   <th>Full Name</th>
@@ -56,16 +67,33 @@
                   <th>Ratings Gained</th>
                   <th>Rating Average</th>
                 </tr>
-                <%arr.forEach(player => {%>
-                  <a href="#">
-                  <tr>
-                    <td><%=player.fullname%></td>
-                    <td><%=player.totalRatings%></td>
-                    <td><%=player.ratingsgained%></td>
-                    <td><%=player.avgRat%></td>
-                  </tr>
-                  </a>
-                <%})%>
+                <%if(locals.arr){%>
+                    <%arr.forEach(player => {%>
+                        
+                            <% if(position=="") {%>
+                                <a href="#">
+                                    <tr>
+                                      <td><%=player.fullname%></td>
+                                      <td><%=player.totalRatings%></td>
+                                      <td><%=player.ratingsgained%></td>
+                                      <td><%=player.avgRat%></td>
+                                    </tr>
+                                    </a>
+                            <%} else{%>
+                                <% if(player.position==position){ %>
+                                    <a href="#">
+                                        <tr>
+                                          <td><%=player.fullname%></td>
+                                          <td><%=player.totalRatings%></td>
+                                          <td><%=player.ratingsgained%></td>
+                                          <td><%=player.avgRat%></td>
+                                        </tr>
+                                        </a>
+                                <% }%>
+                            <% } %>
+                        
+                    <%})%>
+                    <%}%>
 
 
 
