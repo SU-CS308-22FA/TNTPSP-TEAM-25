@@ -708,6 +708,9 @@ app.get('/rankings', function(req, res){
   playerModel.find({}, function (err, playerinfo) {
         emptyArr = []
 
+        console.log(req.body.position)
+
+
         for (player in playerinfo) {
         // code block to be executed
           totalRat = 0
@@ -729,10 +732,52 @@ app.get('/rankings', function(req, res){
           }
         }
         emptyArr.sort((a,b) => (a.avgRat < b.avgRat ? 1 : ((b.avgRat < a.avgRat) ? -1 : 0)))
-        res.render('rankings', {arr: emptyArr})
+        console.log(emptyArr.length)
+        res.render('rankings', {arr: emptyArr,position:""})
 
   })
 })
+
+/////////////////////////////////////////
+
+
+app.post('/positionrankings', function(req, res){
+  playerModel.find({}, function (err, playerinfo) {
+
+    console.log(req.body.position)
+
+    emptyArr = []
+
+    for (player in playerinfo) {
+    // code block to be executed
+      totalRat = 0
+      totalComments = playerinfo[player].verifiedcomments.length
+      for (k in playerinfo[player].verifiedcomments){
+          totalRat += parseFloat(playerinfo[player].verifiedcomments[k].rating)
+      }
+      obj = {
+        'fullname' : playerinfo[player].fullname,
+        'avgRat' : (totalRat/totalComments).toFixed(2),
+        'ratingsgained' : totalRat,
+        'totalRatings' : totalComments,
+        'position': playerinfo[player].position
+      }
+      emptyArr.push(obj)
+    }
+    for(l in emptyArr){
+      if( isNaN(emptyArr[l].avgRat) ){
+        emptyArr[l].avgRat = 0
+      }
+    }
+    emptyArr.sort((a,b) => (a.avgRat < b.avgRat ? 1 : ((b.avgRat < a.avgRat) ? -1 : 0)))
+    console.log(emptyArr.length)
+    res.render('rankings', {arr: emptyArr,position:req.body.position})
+9
+      
+  })
+})
+
+/////////////////////////////////////////
 
 
 app.post('/sortedplayers', async function(req,res){
