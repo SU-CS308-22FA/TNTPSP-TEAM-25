@@ -490,7 +490,7 @@ app.post('/addcomment',async function(req,res){
             );
         }else{
           res.send("wait to be verified")
-          return
+          return 0
         }
       }
 
