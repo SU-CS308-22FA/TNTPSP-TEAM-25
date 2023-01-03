@@ -36,7 +36,8 @@ const playerSchema = new Schema({
   comments : { type : Array , "default" : [] },
   verifiedcomments : { type : Array , "default" : [] },
   pid: Number,
-  position:String
+  position:String,
+  team:String
 });
 
 const playerModel = mongoose.model("player", playerSchema);
@@ -687,6 +688,35 @@ app.post('/mainpage', async function(req,res){
 
 
 })
+
+
+//////////////////////////////////////////////////
+
+
+app.post('/filterTeamPlayers', function(req,res){
+
+  //var filterstring = req.body.playerpos
+  //var query = {position: filterstring}
+  console.log(req.body.team)
+  var imageurl;
+  userModel.find({
+    username:req.session.username
+  },
+  function(err,user){
+    imageurl = user[0].imagelink
+    playerModel.find({}, function (err, playerlist) { // tüm oyuncuları bulup listeyi aktarır
+      res.render('mainpage',{
+        arr:playerlist,
+        team:req.body.team,
+        link:imageurl
+      })
+  });
+  }
+  )
+})
+
+///////////////////////////////////////////////////
+
 app.post('/filterplayers', function(req,res){
 
   //var filterstring = req.body.playerpos
