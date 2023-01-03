@@ -20,7 +20,12 @@
         <div class="wrapper" style="text-align: center;">
                 <br></br>
                 <div>
+                    <%if(locals.link){%>
+                    <img src=<%=link%> onerror="this.onerror=null; this.src='/images/userimage.jpg'"  width="200px" height="200px">
+                    <%}else{%>
                     <img src="/images/userimage.jpg"  width="200px" height="200px">
+
+                    <% } %>   
                     <p style="font-size: 30px;"> <%=username%>
                     <img src="/images/verifiedicon.png"  width="30px" height="30px">
                      </p>

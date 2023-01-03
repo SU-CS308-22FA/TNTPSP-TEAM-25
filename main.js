@@ -281,21 +281,21 @@ app.get('/userprofile', function(req, res){
 
 app.get('/verifieduserprofile/:username', function(req, res){
 
-  var name = req.params['username'].substring(1)
-  var followed;
-  userModel.find({username:req.session.username},function (err, userinfo){
-    followed= userinfo[0].followings.findIndex(({ name }) => name === name)
-
+  var verifiedusername = req.params['username'].substring(1)
+  var followed=-1
+  userModel.find({username:req.session.username},function (err, user){
+    followed= user[0].followings.findIndex(({ name }) => name === verifiedusername)
+    console.log(followed)
+    userModel.find({username: verifiedusername}, function (err, userinfo) {
+      res.render('verifieduserprofile',{
+        username: userinfo[0].username,
+        commentarray: userinfo[0].comments,
+        isfollowed: followed,
+        link:userinfo[0].imagelink
+      })
+    });
   })
-
-  userModel.find({username: name}, function (err, userinfo) {
-    
-    res.render('verifieduserprofile',{
-      username: userinfo[0].username,
-      commentarray: userinfo[0].comments,
-      isfollowed: followed
-    })
-  });
+  
 
 })
 
