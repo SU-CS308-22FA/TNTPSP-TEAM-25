@@ -282,12 +282,18 @@ app.get('/userprofile', function(req, res){
 app.get('/verifieduserprofile/:username', function(req, res){
 
   var name = req.params['username'].substring(1)
+  var followed;
+  userModel.find({username:req.session.username},function (err, userinfo){
+    followed= userinfo[0].followings.findIndex(({ name }) => name === name)
+
+  })
 
   userModel.find({username: name}, function (err, userinfo) {
+    
     res.render('verifieduserprofile',{
       username: userinfo[0].username,
       commentarray: userinfo[0].comments,
-
+      isfollowed: followed
     })
   });
 
@@ -964,5 +970,19 @@ app.post('/followUser', async function(req,res){
 
 });
 
+app.post('/deletefollowing', async function(req,res){
+  
+
+  await userModel.findOneAndUpdate({
+    username: req.session.username
+  },{
+    $pull:{
+      followings: {
+        name: req.body.name
+      }
+
+  }});
+  res.redirect("/verifieduserprofile/:"+req.body.name)
+});
 
 app.listen(process.env.PORT || 3001);
