@@ -81,7 +81,7 @@ app.get('/', function(req, res){
 app.get('/login', function(req, res) {
   if(req.session) console.log(req.session);
   if(req.session.username && req.session.password){
-    res.render('userprofile',{ username: req.session.username, email: req.session.email, password: req.session.password })
+    res.render('userprofile',{ username: req.session.username, email: req.session.email, password: req.session.password, favoritesArray: userinfo[0].favorites })
   }else{
     res.render('login');
   }
@@ -94,9 +94,29 @@ app.get('/register', function(req, res) {
   res.render('register');
 });
 app.get('/playerprofile', function(req, res){
+
     res.render('playerprofile')
 })
-app.get('/playerprofile/:playername', function(req, res) {
+app.get('/playerprofile/:playername', async function(req, res) {
+  var faved = false;
+  if(req.session.username){
+    var theFavorites = []
+
+     await userModel.findOne({
+       username: req.session.username
+     }).then(
+       (user)=>{
+       theFavorites = user.favorites
+     });
+
+     for(let z=0;z<theFavorites.length;z++){
+       theFavorites.forEach((item, index, object) => {
+         if(theFavorites[z]['name'] == decodeURI(req.url.split("/").pop().slice(1))){
+           faved = true
+         }
+       });
+     }
+   }
   //find the player by player name from the database
   var name = req.params['playername'].substring(1)
 
@@ -131,7 +151,8 @@ app.get('/playerprofile/:playername', function(req, res) {
         verifiedcomments : playerinfo[0].verifiedcomments,
 
         commenttype: "add",
-        average: avg
+        average: avg,
+        favored: faved
       })
     }
     else{                           // daha önce yorumu varsa
@@ -142,7 +163,8 @@ app.get('/playerprofile/:playername', function(req, res) {
         verifiedcomments : playerinfo[0].verifiedcomments,
 
         commenttype: "edit",
-        average: avg
+        average: avg,
+        favored: faved
       })
     }
   });
@@ -273,7 +295,8 @@ app.get('/userprofile', function(req, res){
         email: req.session.email,
         password: req.session.password,
         commentarray: userinfo[0].comments,
-        userimage: userinfo[0].imagelink
+        userimage: userinfo[0].imagelink,
+        favoritesArray: userinfo[0].favorites
       })
     });
   }else{
@@ -864,6 +887,27 @@ app.post('/playerprofile/:playername', async function(req, res) {
   //find the player by player name from the database
   //console.log(req.params)
   //console.log(req.session);
+
+  var faved = false;
+  if(req.session.username){
+    var theFavorites = []
+
+     await userModel.findOne({
+       username: req.session.username
+     }).then(
+       (user)=>{
+       theFavorites = user.favorites
+     });
+
+     for(let z=0;z<theFavorites.length;z++){
+       theFavorites.forEach((item, index, object) => {
+         if(theFavorites[z]['name'] == decodeURI(req.url.split("/").pop().slice(1))){
+           faved = true
+         }
+       });
+     }
+   }
+
   console.log(req.session);
 
 
@@ -921,7 +965,8 @@ app.post('/playerprofile/:playername', async function(req, res) {
         standardcomments : sortedComments,
         verifiedcomments : theFollowedComments,
         commenttype: "add",
-        average: avg
+        average: avg,
+        favored: faved
       })
     }
     else{                           // daha önce yorumu varsa
@@ -931,7 +976,8 @@ app.post('/playerprofile/:playername', async function(req, res) {
         standardcomments : sortedComments,
         verifiedcomments : theFollowedComments,
         commenttype: "edit",
-        average: avg
+        average: avg,
+        favored: faved
       })
     }
   });
@@ -956,7 +1002,8 @@ app.post('/enterlink',async function(req,res){ //
       email: req.session.email,
       password: req.session.password,
       commentarray: userinfo[0].comments,
-      userimage: userinfo[0].imagelink
+      userimage: userinfo[0].imagelink,
+      favoritesArray: userinfo[0].favorites
     })
   });
 
@@ -1014,6 +1061,58 @@ app.post('/deletefollowing', async function(req,res){
 
   }});
   res.redirect("/verifieduserprofile/:"+req.body.name)
+});
+
+
+app.post('/favorite', async function(req,res){
+  if(!req.session.username){
+    return
+  }
+ var theFavorites = []
+
+  await userModel.findOne({
+    username: req.session.username
+  }).then(
+    (user)=>{
+    theFavorites = user.favorites
+  });
+
+  var faved = false;
+
+  for(let z=0;z<theFavorites.length;z++){
+    theFavorites.forEach((item, index, object) => {
+      if(theFavorites[z]['name'] == decodeURI(req.body["name"].slice(1))){
+        faved = true
+      }
+    });
+  }
+
+  console.log(faved);
+
+  if(faved == false){
+    await userModel.findOneAndUpdate({
+      username: req.session.username
+    },{
+      $addToSet:{
+        favorites: {
+          name: decodeURI(req.body["name"].slice(1))
+        }
+
+    }});
+  }else{
+    console.log("already here");
+    await userModel.findOneAndUpdate({
+      username: req.session.username
+    },{
+      $pull:{
+        favorites: {
+          name: decodeURI(req.body["name"].slice(1))
+        }
+
+    }});
+  }
+
+
 });
 
 app.listen(process.env.PORT || 3001);

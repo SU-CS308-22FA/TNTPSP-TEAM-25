@@ -22,7 +22,7 @@
             }
         }
     </script>
-    
+
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -46,12 +46,12 @@
                             <img src="/images/userimage.jpg"  width="150px" height="150px">
                         <%}%>
                         <button onclick="showform()" style="margin-left: 10%; color: white;background-color: red;border: 0ch;">Enter Image Link</button>
-                        
+
                         <form action="/enterlink" method="post" id="textboxContainer" style="display: none;">
                             <input type="text" class="form-control" name="link" placeholder="Enter link" />
-                            <button style="background-color:red;margin-left: 25%;color: white;"type="submit">Submit</button>    
+                            <button style="background-color:red;margin-left: 25%;color: white;"type="submit">Submit</button>
                         </form>
-                        
+
 
                         <br></br>
                         <label for="userp">Username:  </label> <p name='userp'><%=username%></p>
@@ -74,9 +74,24 @@
 
                           <%})%>
                         <%}%>
+                        <div style="width: auto !important; margin-top: 30px; " class="">
+                          <h1 style="display: inline; white-space: nowrap;"> Favorite Players </h1>
+                          <%if(locals.favoritesArray){%>
+                            <%favoritesArray.forEach(favorite => {%>
+                                <ul>
+                                  <li><a style="padding: 5px;font-size: 22px; display: inline; white-space: nowrap;"><%=favorite.name%></a></li>
+
+
+                                </ul>
+
+                            <%})%>
+                          <%}%>
+                        </div>
 
                     </div>
+
                 </div>
+
 
 
 
