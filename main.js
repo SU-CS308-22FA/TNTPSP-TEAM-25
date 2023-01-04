@@ -41,6 +41,61 @@ const playerSchema = new Schema({
   team:String
 });
 
+var objectOfLink = {
+  "Arda Turan"          : "https://www.sofascore.com/embed/player/arda-turan/5702",
+  "Burak Yılmaz"        : "https://www.sofascore.com/embed/player/burak-yilmaz/18864",
+  "Arda Güler"          : "https://www.sofascore.com/embed/player/arda-guler/1091116",
+  "Merih Demiral"       : "https://www.sofascore.com/embed/player/merih-demiral/806968",
+
+  "Volkan Babacan"      : "https://www.sofascore.com/embed/player/volkan-babacan/30143",
+  "Mert Hakan Yandaş"   : "https://www.sofascore.com/embed/player/mert-hakan-yandas/856849",
+  "Barış Alper"         : "https://www.sofascore.com/embed/player/baris-alper-yilmaz/904096",
+  "Necip Uysal"         : "https://www.sofascore.com/embed/player/necip-uysal/43394",
+
+  "Efecan Karaca"       : "https://www.sofascore.com/embed/player/efecan-karaca/60510",
+  "Uğurcan Çakır"       : "https://www.sofascore.com/embed/player/ugurcan-cakir/754330",
+  "Emre Mor"            : "https://www.sofascore.com/embed/player/emre-mor/826258",
+  "Altay Bayındır"      : "https://www.sofascore.com/embed/player/altay-bayindir/815890",
+
+  "Hakan Çalhanoğlu"    : "https://www.sofascore.com/embed/player/hakan-calhanoglu/135700",
+  "Kaan Ayhan"          : "https://www.sofascore.com/embed/player/kaan-ayhan/138152",
+  "Umut Bozok"          : "https://www.sofascore.com/embed/player/umut-bozok/869839",
+  "Salih Uçan"          : "https://www.sofascore.com/embed/player/salih-ucan/135695",
+
+  "Deniz Türüç"         : "https://www.sofascore.com/embed/player/deniz-turuc/252207",
+  "Ozan Kabak"          : "https://www.sofascore.com/embed/player/ozan-kabak/857740",
+  "Abdülkerim Bardakçı" : "https://www.sofascore.com/embed/player/abdulkerim-bardakci/178963",
+  "Cenk Tosun"          : "https://www.sofascore.com/embed/player/cenk-tosun/72127",
+
+  "Kerem Aktürkoğlu"     : "https://www.sofascore.com/embed/player/kerem-akturkoglu/903324",
+  "Doğan Alemdar"        : "https://www.sofascore.com/embed/player/dogan-alemdar/947874",
+  "Tayyib Talha Sanuç"   : "https://www.sofascore.com/embed/player/tayyip-talha-sanuc/851909",
+  "Zeki Çelik"           : "https://www.sofascore.com/embed/player/zeki-celik/893008",
+
+  "Enes Ünal"            : "https://www.sofascore.com/embed/player/enes-unal/336655",
+  "Yusuf Yazıcı"         : "https://www.sofascore.com/embed/player/yusuf-yazici/827804",
+  "Yunus Akgün"          : "https://www.sofascore.com/embed/player/yunus-akgun/857738",
+  "Berkan Kutlu"         : "https://www.sofascore.com/embed/player/berkan-kutlu/992912",
+
+  "Irfan Can Kahveci"   : "https://www.sofascore.com/embed/player/irfan-can-kahveci/226986",
+  "Ferdi Kadıoğlu"      : "https://www.sofascore.com/embed/player/ferdi-kadioglu/825844",
+  "Nazım Sangare"       : "https://www.sofascore.com/embed/player/nazim-sangare/169425",
+  "Emin Bayram"         : "https://www.sofascore.com/embed/player/emin-bayram/997153",
+
+  "Kazımcan Karataş"    : "https://www.sofascore.com/embed/player/kazimcan-karatas/1008884",
+  "Mert Günok"          : "https://www.sofascore.com/embed/player/mert-gunok/39573",
+  "Ersin Destanoğlu"    : "https://www.sofascore.com/embed/player/ersin-destanoglu/913656",
+  "Berkay Ozcan"        : "https://www.sofascore.com/embed/player/berkay-ozcan/806964",
+
+  "Hasan Ali Kaldırım"   : "https://www.sofascore.com/embed/player/hasan-ali-kaldirim/39847",
+  "Dorukhan Toköz"       : "https://www.sofascore.com/embed/player/dorukhan-tokoz/796133",
+  "Abdülkadir Omür"      : "https://www.sofascore.com/embed/player/abdulkadir-omur/826155",
+  "Mert Müldür"          : "https://www.sofascore.com/embed/player/mert-muldur/836683",
+
+  "Cengiz Under"           : "https://www.sofascore.com/embed/player/cengiz-under/758876",
+  "Cağlar Söyüncü"         : "https://www.sofascore.com/embed/player/caglar-soyuncu/758608"
+}
+
 const playerModel = mongoose.model("player", playerSchema);
 
 const requestSchema = new Schema({
@@ -117,8 +172,10 @@ app.get('/playerprofile/:playername', async function(req, res) {
        });
      }
    }
+
   //find the player by player name from the database
   var name = req.params['playername'].substring(1)
+  //console.log(objectOfLink[name]);
 
   var query = {fullname: name}
 
@@ -152,7 +209,8 @@ app.get('/playerprofile/:playername', async function(req, res) {
 
         commenttype: "add",
         average: avg,
-        favored: faved
+        favored: faved,
+        iframelink: objectOfLink[name]
       })
     }
     else{                           // daha önce yorumu varsa
@@ -164,7 +222,8 @@ app.get('/playerprofile/:playername', async function(req, res) {
 
         commenttype: "edit",
         average: avg,
-        favored: faved
+        favored: faved,
+        iframelink: objectOfLink[name]
       })
     }
   });
@@ -917,6 +976,7 @@ app.post('/playerprofile/:playername', async function(req, res) {
   }
 
   var name = req.params['playername'].substring(1)
+  //console.log();
   var query = {fullname: name}
 
   var theFollowed;
@@ -966,7 +1026,8 @@ app.post('/playerprofile/:playername', async function(req, res) {
         verifiedcomments : theFollowedComments,
         commenttype: "add",
         average: avg,
-        favored: faved
+        favored: faved,
+        iframelink: objectOfLink[name]
       })
     }
     else{                           // daha önce yorumu varsa
@@ -977,7 +1038,8 @@ app.post('/playerprofile/:playername', async function(req, res) {
         verifiedcomments : theFollowedComments,
         commenttype: "edit",
         average: avg,
-        favored: faved
+        favored: faved,
+        iframelink: objectOfLink[name]
       })
     }
   });
@@ -1008,6 +1070,7 @@ app.post('/enterlink',async function(req,res){ //
   });
 
 })
+
 app.post('/generatePassword', async function(req,res){
 
   var length = 12,
@@ -1025,8 +1088,7 @@ app.post('/generatePassword', async function(req,res){
 
   })
 
-}
-);
+});
 
 app.post('/followUser', async function(req,res){
   await userModel.findOneAndUpdate({
