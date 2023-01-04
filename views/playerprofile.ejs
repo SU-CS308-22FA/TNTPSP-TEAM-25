@@ -18,7 +18,7 @@
           xhttp.send(JSON.stringify(data));
         }
     </script>
-    <style >
+    <style>
     .checked {
     color: orange;
     }
@@ -36,40 +36,27 @@
 
         <div class="parent">
 
-            <div class="child1">
-                <img src="/images/userimage.jpg" class="centerimage"  width="30%" height="30%">
-
-            </div>
 
 
-            <div class="child2"  style="width: 20%; border: 5px solid red;padding: 10px;">
-                <p class="centertext" ><b>Player Info</b> </p>
-                <p> Name: <%=pName%></p>
-                <p> Age: <%=pAge%></p>
-                <p> Current Club: Çaykur Rize Spor</p>
-                <p> Position: CM </p>
-                <p><%favored%></p>
-                <%if(locals.favored){%>
-                  <%if(locals.favored == true){%>
-                    <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star checked"></span></p>
-                  <%}else{%>
-                    <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star"></span></p>
-                  <%}%>
+
+            <div class="child2"  style="width: 100%; border: 5px solid red;padding: 10px; margin-left: -190px;">
+              <iframe width="100%" height="550" frameborder="0" scrolling="no" src=<%=iframelink%>>
+              </iframe></div>
+              <%if(locals.favored){%>
+                <%if(locals.favored == true){%>
+                  <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star checked"></span></p>
                 <%}else{%>
                   <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star"></span></p>
                 <%}%>
-            </div>
+              <%}else{%>
+                <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star"></span></p>
+              <%}%>
 
 
-        </div>
-
-
-        <div style="width: 500px; border: 5px solid red;padding: 10px;margin: auto;">
-            <p class="centertext" ><b>Player Club Stats</b> </p>
-            <p> goals:10</p>
-            <p> assits:10</p>
 
         </div>
+
+
 
         <br></br>
         <div style="width: 100px;height: 50px; border: 5px solid red;margin: auto; text-align: center;">
