@@ -23,7 +23,8 @@ const userSchema = new Schema({
   isVerified: String,
   comments : { type : Array , "default" : [] },
   followings : { type : Array , "default" : [] },
-  imagelink: String
+  imagelink: String,
+  favorites : { type : Array , "default" : [] },
 });
 
 const userModel = mongoose.model("userModel", userSchema);
@@ -296,7 +297,7 @@ app.get('/verifieduserprofile/:username', function(req, res){
       })
     });
   })
-  
+
 
 })
 
@@ -809,7 +810,7 @@ app.post('/positionrankings', function(req, res){
     console.log(emptyArr.length)
     res.render('rankings', {arr: emptyArr,position:req.body.position})
 9
-      
+
   })
 })
 
@@ -1001,7 +1002,7 @@ app.post('/followUser', async function(req,res){
 });
 
 app.post('/deletefollowing', async function(req,res){
-  
+
 
   await userModel.findOneAndUpdate({
     username: req.session.username

@@ -9,29 +9,29 @@
     <body>
         <a href="/mainpage">
             <button class="gobackbutton"></button>
-        </a>    
+        </a>
         <p> Go Back </p>
 
         <div class="parent">
-            
+
             <div class="child1">
                 <img src="/images/userimage.jpg" class="centerimage"  width="30%" height="30%">
-    
+
             </div>
-    
-    
+
+
             <div class="child2"  style="width: 20%; border: 5px solid red;padding: 10px;">
                 <p class="centertext" ><b>Player Info</b> </p>
                 <p> Name: <%=pName%></p>
                 <p> Age: <%=pAge%></p>
                 <p> Current Club: Çaykur Rize Spor</p>
                 <p> Position: CM </p>
-                
+
             </div>
-    
+
 
         </div>
-        
+
 
         <div style="width: 500px; border: 5px solid red;padding: 10px;margin: auto;">
             <p class="centertext" ><b>Player Club Stats</b> </p>
@@ -39,7 +39,7 @@
             <p> assits:10</p>
 
         </div>
-        
+
         <br></br>
         <div style="width: 100px;height: 50px; border: 5px solid red;margin: auto; text-align: center;">
 
@@ -48,9 +48,9 @@
 
             <% } else{ %>
                 <p style="font-size:25px ;margin: 15px;" ><b><%=average%>/10</b>  </p>
-                
+
             <% }%>
-            
+
 
         </div>
         <% if(commenttype=="add"){%>
@@ -63,12 +63,12 @@
 
         </a>
         <br></br>
-    
+
         <table style="width: 80%; margin-left: 10%;table-layout: fixed;">
             <td style="vertical-align: top;">
                 <div style="border:2px solid red ;padding-bottom: 20px;padding-top: 10px;">
                     <header style="font-size: 30px;text-align: center;"> Verified User Comments </header>
-                    
+
                     <form action="/playerprofile/:<%=pName%>" method="post">
                         <input style="margin-left: 40%;margin-right: 40%;" type="submit" value="Followings">
                     </form>
@@ -86,7 +86,7 @@
                             </li>
 
                         <%})%>
-                        
+
                       </ol>
                 </div>
 
@@ -102,7 +102,7 @@
                             <li style="padding: 10px;"><%=commentobj.commenter%>: &nbsp<%=commentobj.comment%></li>
 
                         <%})%>
-                        
+
 
                       </ol>
 
