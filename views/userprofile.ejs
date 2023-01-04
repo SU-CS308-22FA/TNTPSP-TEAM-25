@@ -22,7 +22,7 @@
             }
         }
     </script>
-    
+
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -46,12 +46,12 @@
                             <img src="/images/userimage.jpg"  width="150px" height="150px">
                         <%}%>
                         <button onclick="showform()" style="margin-left: 10%; color: white;background-color: red;border: 0ch;">Enter Image Link</button>
-                        
+
                         <form action="/enterlink" method="post" id="textboxContainer" style="display: none;">
                             <input type="text" class="form-control" name="link" placeholder="Enter link" />
-                            <button style="background-color:red;margin-left: 25%;color: white;"type="submit">Submit</button>    
+                            <button style="background-color:red;margin-left: 25%;color: white;"type="submit">Submit</button>
                         </form>
-                        
+
 
                         <br></br>
                         <label for="userp">Username:  </label> <p name='userp'><%=username%></p>
@@ -74,6 +74,11 @@
 
                           <%})%>
                         <%}%>
+
+                    </div>
+                    <div style="display: inline-block; vertical-align: top;width: 10%;">
+                        <h1> Favorite Players </h1>
+                        
 
                     </div>
                 </div>
