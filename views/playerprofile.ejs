@@ -44,16 +44,19 @@
               </iframe></div>
               <%if(locals.favored){%>
                 <%if(locals.favored == true){%>
-                  <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star checked"></span></p>
+                  <div class="">
+                    <button type="button" name="button" onclick="fav();"><p> Fav This Player: <span id="spanToClick" class="fa fa-star checked"></span></p></button>
+                  </div>
                 <%}else{%>
-                  <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star"></span></p>
+                  <div class="">
+                    <button type="button" name="button" onclick="fav();"><p> Fav This Player: <span id="spanToClick" class="fa fa-star"></span></p></button>
+                  </div>
                 <%}%>
               <%}else{%>
-                <p> Fav This Player: <span id="spanToClick" onclick="fav();" class="fa fa-star"></span></p>
+                <div class="">
+                  <button type="button" name="button" onclick="fav();"><p> Fav This Player: <span id="spanToClick" class="fa fa-star"></span></p></button>
+                </div>
               <%}%>
-
-
-
         </div>
 
 
