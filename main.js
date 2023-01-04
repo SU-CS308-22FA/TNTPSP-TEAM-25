@@ -231,6 +231,11 @@ app.get('/playerprofile/:playername', async function(req, res) {
 
 app.get('/mainpage', function(req, res) {
 
+  if(!req.session.username){
+    res.redirect("/login")
+    return
+  }
+
   var imageurl;
   userModel.find({
     username:req.session.username
